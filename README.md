@@ -38,6 +38,8 @@ TBC a write up on usage for all of these.
 
 **Planned changes**
 Moving config into a seperate xml file so folk aren't editing the ps1 file, this makes it tidier and causes less of a hassle if a new version of script is released.
+Backups
+Front End
 
 **Known Issues**
 - Unable to broadcast any messages with spaces in them for broadcast or shutdownmessage. Appears to be a game bug.

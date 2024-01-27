@@ -1,0 +1,45 @@
+<!-- Palworld Server Tools Config -->
+<PalworldServerToolsConfig>
+	<!-- Game Connection IP or Domain -->
+	<HostIP></HostIP>
+	<!-- Game Connection Port -->
+	<GamePort>8211</GamePort>
+	<!-- If Server should show in Community Server Browser or not. Set to True or False -->
+	<CommunityServer></CommunityServer>
+	<!-- Port for RCON Connection. Can instead be specified with launch parameter -RCONPort -->
+	<RCONPort>25575</RCONPort>
+	<!-- Password for RCON connection. Can instead be specified with launch parameter -RCONPass -->
+	<RCONPass>YOUR_RCON_PASSWORD</RCONPass>
+	
+	<!-- Path to where Steamcmd.exe is located. -->
+	<SteamCMDPath></SteamCMDPath>
+	<!-- Path to where ARRCON.exe is located.-->
+	<ARRCONPath></ARRCONPath>
+	<!-- Path to the dedicated server files -->
+	<ServerPath></ServerPath>
+	
+   <!-- Setting Switcher Configuration Options -->
+	<!-- Specify where Custom Settings should be stored.
+	Leave Blank for the default: "$ServerPath\Pal\Saved\Config\WindowsServer\CustomSettings\"
+	Change this if you've stored your settings files elsewhere.
+	You can also specify this as a launch parameter -ThemeSettingsPath in case you're running several servers from one host.-->
+	<ThemeSettingsPath></ThemeSettingsPath>
+	<!--The name of the 'Standard' .ini file you want to use when there's no special events. -->
+	<NormalSettingsName>Normal Settings</NormalSettingsName>
+	
+	<!-- How many seconds notice should end users get. Default 90 -->
+	<AutoShutdownTimer>90</AutoShutdownTimer>
+	<!-- What warning should users get. Note, as of 1.3.0, messages with spaces can't be sent :( -->
+	<AutoShutdownMessage>Server_Shutting_down!</AutoShutdownMessage>
+
+	<!-- What Config file should be used on what day.
+	Simply add the filename of each config file you've made, without the extension.
+	In other words, if your file is called hardmode.ini just type in hardmode. -->
+	<Monday>Normal Settings</Monday>
+	<Tuesday>Normal Settings</Tuesday>
+	<Wednesday>Normal Settings</Wednesday>
+	<Thursday>Normal Settings</Thursday>
+	<Friday>Normal Settings</Friday>
+	<Saturday>Normal Settings</Saturday>
+	<Sunday>Normal Settings</Sunday>
+</PalworldServerToolsConfig>

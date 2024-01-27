@@ -645,4 +645,3 @@ if ($True -eq $RCONParamsUsed){
 	RCON
 	ExitCheck
 }
-

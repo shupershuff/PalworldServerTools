@@ -56,7 +56,7 @@ Function Write-Log {
 		   [switch]$NewLine, #used to enter in additional lines without redundantly entering in datetime and message type. Useful for longer messages.
 		   [switch]$NoNewLine, #used to enter in text without creating another line. Useful for text you want added succinctly to log but not outputted to console
 		   [switch]$NoConsole) #Write to log but not to Console
-	$Script:LogFile = ($WorkingDirectory + "\" + $ScriptFileName.replace(".ps1","_") + "log.txt")
+	$Script:LogFile = ($WorkingDirectory + "\" + $ScriptFileName.replace(".ps1","_")  + (("{0:yyyy/MM/dd}" -f (get-date)) -replace "/",".") +"log.txt")
     #$Script:LogFile = "C:\Palworld Server\Log.txt" #For testing
 	if ((Test-Path $LogFile) -ne $true){
 		Add-content $LogFile -value "" #Create empty Logfile
@@ -120,7 +120,7 @@ Function Write-Log {
 	if ($True -eq $NewLine){#Overwrite $LogMessage to remove headers if -newline is enabled
 		$LogMessage = "                                $LogString"
 	}
-	if ($True -eq $NoNewLine){#Overwrite $LogMessage to put text immediately after last line if -nonewline is enabled
+	if ($True -eq $NoNewLine -and $NoLogging -eq $False){#Overwrite $LogMessage to put text immediately after last line if -nonewline is enabled
 		$LogContent = (Get-Content -Path $LogFile -Raw) # Read the content of the file
 		if ($logcontent -match ' \r?\n\r?\n$' -or $logcontent -match ' \r?\n$' -or $logcontent -match ' \r?\n$' -or $logcontent[-1] -eq " "){#if the last characters in the file is a space a space with one or two line breaks
 			$Space = " "
@@ -336,7 +336,7 @@ Function LaunchServer {
 			}
 			$GameSettings = $AllConfigOptionsObject | where-object {$_.Name -match $Config.$currentday}
 			$TodaysTheme = $GameSettings.Name.replace("_"," ").replace(".ini","")
-			$TodaysTheme | Out-File -FilePath "$WorkingDirectory\.TodaysTheme.txt"
+			$TodaysTheme | Out-File -FilePath "$WorkingDirectory\TodaysTheme.txt"
 			Copy-Item $GameSettings.Value $SettingsActual
 			Write-log -success -noconsole "LaunchServer: "
 			Write-log -success -nonewline ("Copied `"" + $TodaysTheme + "`" Settings to PalWorldSettings.ini")

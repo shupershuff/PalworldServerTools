@@ -37,7 +37,7 @@ Not available yet, coming soon<br>
 **Useful for those with Home Assistant**<br>
 For Home Assistant users, Using HASS.Agent on your windows PC you can setup PowerShell based sensors/commands to retrieve/send data to the server.<br>
 You can setup a card like this and share it with your players/mods for basic remote control functions without needing to give them the RCON password.<br>
-![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/947a0782-67b4-479b-84d3-d9fae89a0dba)<br>
+![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/6c331e8c-e8a2-4fbb-a685-b7bff4a3b313)<br>
 
 # Setup Information #
 **Download Script Release, ARRCON.exe and SteamCMD**

@@ -6,7 +6,7 @@ Readme and instructions IN PROGRESS
 **Note:**
 This is an early version of this script and will likely have some bugs.<br>
 If you notice anything funky or would like additional functionality, please raise an issue.<br>
-Please also see the [Planned Changes](#planned-changes) section below.<br>
+Please also see the [Planned Changes](#planned-changes-features--fixes) section below.<br>
 
 ## Usage:
 Script is designed to be used with Task Scheduler (for updating/launching server)<br>
@@ -118,7 +118,7 @@ TBC - explain setup<br>
 - TBC
 - Not seeing something here? Go to [GitHub issues](https://github.com/shupershuff/PalworldServerTools/issues) and log a request, issue or question.
 
-# Planned Changes/Features/Fixes #
+# Planned Changes, Features & Fixes #
 - Automate Local Backups (hourlies for 1 day, dailies, weekly) for both level data and characters.
 - Automated Server update checks
 - Add a means of checking whether there's a script update available from GitHub.

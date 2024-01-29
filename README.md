@@ -18,13 +18,23 @@ You can also review the log file for what's happening when you're running comman
 
 ## Features:
 **RCON Calls**<br>
-Section TBC, but you can run RCON commands to retrieve data or initiate server actions.<br>
-<br>
-Note: Kick and Ban not implemented yet.<br>
+You can run RCON commands to retrieve data or initiate server actions.<br>
+Server Info:
+Retrieve Info (or specifically Servername or server Version provided by info), Players online (including Player Count).<br>
+Server Commands:
+Schedule a shutdown (with a message), shutdown immediately, force a save, broadcast a message.
+Note: Kick and Ban not implemented yet, Game bug not allowing messages with spaces to be sent.<br>
+
+**Shutdown Reminders**
+TBC a better version of this feature will be in release in v1.1.0
+Want your server to restart daily but want to give users some warning?
+When using the script to launch the server again it will schedule a shutdown (time to shutdown is configured by you in config.xml)
 
 **Daily Settings Switcher**<br>
 Run daily events on your server! That's right you can have different settings for each day of the week.<br>
 Simply create the custom config (.ini) files and specify which day should load them. See [Setup Information](#setup-information) for more details.<br>
+Example Idea below:<br>
+![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/6adabee0-8a00-422d-a873-7ff469bc871f)<br>
 
 **Server Admin**<br>
 You can check for updates, initiate updates, start and stop the server.<br>
@@ -47,7 +57,7 @@ You can setup a card like this and share it with your players/mods for basic rem
 4. TBC SteamCMD steps
 
 **Optional - Configure your .ini files**<br>
-Section TBC but basically the script will be able to load any files ending with .ini in this folder "<SERVERPATH>\Pal\Saved\Config\WindowsServer\CustomSettings".<br>
+Section TBC but basically the script will be able to load any files ending with .ini in this folder "<SERVERPATH>\Pal\Saved\Config\WindowsServer\CustomSettings\".<br>
 You can then mention the names of these in the config.xml file for them to load on a given day. Using this script means that PalWorldSettings.ini will be overwritten each time you launch the server, so any edits to game settings should be run out of this folder.<br>
 Configuring the ini files themselves is essentially just a case of specifying the available game config parameters which you can see on Palworlds site [here](https://tech.palworldgame.com/optimize-game-balance).<br>
 If you don't want to use this feature then set each day in config.xml to the same value as NormalSettingsName
@@ -55,19 +65,19 @@ If you don't want to use this feature then set each day in config.xml to the sam
 
 **Configure the XML file**
 Section TBC but the config.xml file should mostly be self explanatory with the descriptions above each config option.<br>
-- HostIP - 
-- GamePort - 
-- CommunityServer - 
-- RCONPort - 
-- RCONPass - 
-- SteamCMDPath - 
-- ARRCONPath - 
-- ServerPath - 
-- ThemeSettingsPath - 
-- NormalSettingsName - 
-- AutoShutdownTimer - 
-- AutoShutdownMessage - 
-- Monday..Sunday - 
+- HostIP - IP of the Server.
+- GamePort - Port that the server uses for connections. Default 8211.
+- CommunityServer - Set to True if you want the server to be visibile in the community servers list
+- RCONPort - Connection Port for RCON
+- RCONPass - Administrator Password for RCON
+- SteamCMDPath - Path to the folder steamcmd.exe sits in.
+- ARRCONPath -  Path to the folder ARRCON.exe sits in.
+- ServerPath - Path to the folder that palserver.exe sits in.
+- ThemeSettingsPath - Path to where your custom.ini files live. Leave blank for the default path to be used (<SERVERPATH>\Pal\Saved\Config\WindowsServer\CustomSettings\")
+- NormalSettingsName - Name of the file that you want your standard server settings (.ini file) to load from. Default "Normal Settings"
+- AutoShutdownTimer - Used for restarting server. Time that server should wait until shutdown to give players a bit of notice.
+- AutoShutdownMessage - This XML config will be removed in v1.1.0
+- Monday..Sunday - Specify what settings (.ini) file you want to load from for each day of the week. Default "Normal Settings"
 Currently there is some basic validation to check if *some* of the info in the config file is valid.<br>
 
 **Test Script**<br>
@@ -98,7 +108,7 @@ Server Launch and misc Parameters:
 - -StartNoTheme - Will check for updates and start the server using your "Normal" settings
 - -StartThemed - Will check for updates and start the server using the 'themed' settings for whatever day it is
 - -NoUpdate - To be used in conjuntion with -StartNoTheme or -StartThemed so that server starts immediately without checking for updates.
-- -UpdateOnly - Will launch the script
+- -UpdateOnly - Will launch the script to update the Palworld server.
 - -UpdateCheck - Used to check if there's updates available (but not update) and return either "Version Up to date" or "Update Available"
 - -TodaysTheme - This will display the name of the settings (.ini) that has been loaded
 - -NoLogging - This disables entries being written to the log file. Useful if you want to prevent sensors from writing to the log file every minute.
@@ -113,6 +123,7 @@ Parameters you'll likely not need, but they're here if you need them:
 
 **Home Assistant Nerds**<br>
 TBC - explain setup<br>
+1. 
 
 # FAQ #
 - TBC

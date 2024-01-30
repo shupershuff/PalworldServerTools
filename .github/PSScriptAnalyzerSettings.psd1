@@ -5,7 +5,7 @@
         # Rules that are safe to ignore
         #'PSAvoidUsingCmdletAliases',
         #'PSAvoidUsingWMICmdlet',
-        'PSAvoidUsingWriteHost',
+        'PSAvoidUsingWriteHost'
 
         # Rule infractions to be fixed in the code
         #'PSAvoidUsingConvertToSecureStringWithPlainText',

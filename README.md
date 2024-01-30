@@ -19,16 +19,26 @@ You can also review the log file for what's happening when you're running comman
 ## Features:
 **RCON Calls**<br>
 You can run RCON commands to retrieve data or initiate server actions.<br>
-Retrieve Server Info (or specifically Servername or server Version provided by info), Players online (including Player Count).<br>
-<br>
-Issue Server Commands:<br>
-Schedule a shutdown (with a message), shutdown immediately, force a save, broadcast a message.<br>
-Note: Kick and Ban not implemented yet, Game bug not allowing messages with spaces to be sent.<br>
+Receive Server Information:
+- INFO (or specifically Servername or server Version provided by info)
+- Players online (including Player Count).
+
+Issue Server Commands:
+- Schedule a shutdown with a message
+- Shutdown immediately
+- Force a save
+- Broadcast a message.
+
+Note: Kick and Ban not implemented yet (will be in v1.1.0, Game bug not allowing messages with spaces to be sent.<br>
 
 **Shutdown Reminders**<br>
 Want your server to restart daily but want to give users some warning?<br>
 When using the script to launch the server again it will schedule a shutdown (time to shutdown is configured by you in config.xml)<br>
 NOTE: An improved version of this feature will be in release in v1.1.0 which will enable multiple reminders in an increasing frequency when server is about to restart.<br>
+
+**Player Log**<br>
+TBC in v1.1.0
+Capture who was online at what time in a daily text file.<br>
 
 **Daily Settings Switcher**<br>
 Run daily events on your server! That's right you can have different settings for each day of the week.<br>
@@ -140,6 +150,8 @@ Parameters you'll likely not need, but they're here if you need them:
 # Planned Changes, Features & Fixes #
 - Automate Local Backups (hourlies for 1 day, dailies, weekly) for both level data and characters.
 - Automated Server update checks
+- Playerlog file
+- Improved shutdown notifications
 - Add a means of checking whether there's a script update available from GitHub.
 - Front End CLI or better yet a proper GUI (would love help if you're any good with this sort of thing).
 - Fix stuff that doesn't work :)

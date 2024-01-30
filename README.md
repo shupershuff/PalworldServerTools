@@ -1,7 +1,7 @@
 # Overview
 PalworldServer Tools is a PowerShell script used for administering dedicated Palworld servers.
 Currently this is a tool without a GUI designed to run when called by task scheduler, sensors or other scripts.
-A GUI will hopefully be developed down the track, I need to learn how to create these first!.
+A GUI will hopefully be developed down the track, I need to learn how to create this first!
 
 **Note:**
 This is an early version of this script and will likely have some bugs.<br>

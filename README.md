@@ -1,14 +1,14 @@
-# Palworld Server Tools
-PowerShell based tool for administering dedicated Palworld servers.
-
-Readme and instructions IN PROGRESS
+# Overview
+PalworldServer Tools is a PowerShell script used for administering dedicated Palworld servers.
+Currently this is a tool without a GUI designed to run when called by task scheduler, sensors or other scripts.
+A GUI will hopefully be developed down the track, I need to learn how to create these first!.
 
 **Note:**
 This is an early version of this script and will likely have some bugs.<br>
-If you notice anything funky or would like additional functionality, please raise an issue.<br>
+If you notice anything funky, would like additional functionality or have any questions, please raise an [issue](https://github.com/shupershuff/PalworldServerTools/issues).<br>
 Please also see the [Planned Changes](#planned-changes-features--fixes) section below.<br>
 
-## Usage:
+## Use Case:
 Script is designed to be used with Task Scheduler (for updating/launching server)<br>
 Can also be used with HASS.Agent (or other tools) to issue and capture the results of RCON commands.<br>
 To use, call the script with launch parameters eg "& '.\PalworldServerTools.ps1' -save"<br>
@@ -39,7 +39,7 @@ Example Idea below:<br>
 **Server Admin**<br>
 You can check for updates (manually and at server launch), initiate updates, start and stop the server.<br>
 
-Note: Kick and Ban not implemented yet<br>
+Note: Kick and Ban not implemented yet, will be in v1.1.0<br>
 Note: Auto Update feature not implemented yet but plan to have a feature to regularly check for new versions and if so force a restart and update.<br>
 
 **Backups**<br>
@@ -92,21 +92,24 @@ You'll want to test the functions first and ensure there aren't any errors due t
 3. If there are issues, you can review the log file in the folder where the script lives for further information.
 
 **Configure Task Scheduler**<br>
-1. TBC
-
-**Launch Parameters available:**<br>
+If you need help or want to see examples, see [PalworldTools Task Scheduler Documentation](docs/TASKSCHEDULER.md).
+## Usage ##
+**Launch Parameters available**<br>
 At this stage this script is mostly a backend tool so these Parameters are the main means of performing tasks.<br>
 Parameters utilizing RCON:<br>
 - -Info - RCON request to return server Info.
 - -Version - Used to specifically return server version text provided by -info
 - -ServerName - Used to specifically return server name text provided by -info
-- -ShowPlayers - Show the names of all logged in players.
+- -ShowPlayers - Show the names of all logged in players. TBC FROM v1.1.0 this will instead show a comma separated response, the exact response you'd get from RCON.
+- -ShowPlayerNamess - TBC FROM v1.1.0 ONWARDS Show the names of all logged in players.
 - -ShowPlayerCount - Number of players online
 - -Shutdown - Used to initiate a planned shutdown. Can be used in conjunction with -shutdowntimer and -shutdownmessage. The script will also initiate a broadcast message notifying of shutdown when it's imminent.
 - -ShutdownTimer - Optional parameter. Used to specify how many seconds until shutdown should occur. If not specified it will use the value from the config file.
 - -ShutdownMessage - To use this use -broadcast "message". Used to customise the shutdown message.
 - -Broadcast - To use this use -broadcast "message". Sends a message to all players. Note that as of the time of writing, it's not possible to send messages with spaces in them (game limitation).
 - -DoExit - Schedule an immediate shutdown of the server.
+- -kick (or -kickplayer) - TBC FROM v1.1.0 ONWARDS Used to kick a player. Script allows you to specify either steam ID or playername to kick.
+- -ban (or -banplayer) - TBC FROM v1.1.0 ONWARDS Used to ban a player. Script allows you to specify either steam ID or playername to ban. If specified player isn't online, script will warn you (in case you made a typo).
 - -Save - Force server to save data.
 
 Server Launch and misc Parameters:
@@ -127,11 +130,10 @@ Parameters you'll likely not need, but they're here if you need them:
 - -RCONPass - Used to specify RCON Password. Parameter only useful if you're hosting more than one server.
 
 **Home Assistant Nerds**<br>
-TBC - explain setup<br>
-1. 
+See [PalworldTools Home Assistant Documentation](docs/HOMEASSISTANT.md).
 
 # FAQ #
-- TBC
+- Nothing Yet!
 - Not seeing something here? Go to [GitHub issues](https://github.com/shupershuff/PalworldServerTools/issues) and log a request, issue or question.
 
 # Planned Changes, Features & Fixes #

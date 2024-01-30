@@ -50,6 +50,7 @@ Will also supply a guide on how you can have your backup folder sync to the clou
 For Home Assistant users, Using HASS.Agent on your windows PC you can setup PowerShell based sensors/commands to retrieve/send data to the server.<br>
 You can setup a card like this and share it with your players/mods for basic remote control functions without needing to give them the RCON password.<br>
 ![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/6c331e8c-e8a2-4fbb-a685-b7bff4a3b313)<br>
+For more info see [PalworldServerTools Home Assistant Documentation](docs/HOMEASSISTANT.md).
 
 # Setup Information #
 **Download Script Release, ARRCON.exe and SteamCMD**<br>
@@ -91,8 +92,11 @@ You'll want to test the functions first and ensure there aren't any errors due t
 2. Enter in "& '.\PalworldServerTools.ps1' -info" to test (info as an example parameter). Obviously change the parameter for any other things you want to test.
 3. If there are issues, you can review the log file in the folder where the script lives for further information.
 
+** Optional Home Assistant Setup**<br>
+See [PalworldServerTools Home Assistant Documentation](docs/HOMEASSISTANT.md).
+
 **Configure Task Scheduler**<br>
-If you need help or want to see examples, see [PalworldTools Task Scheduler Documentation](docs/TASKSCHEDULER.md).
+If you need help or want to see examples, see [PalworldServerTools Task Scheduler Documentation](docs/TASKSCHEDULER.md).
 ## Usage ##
 **Launch Parameters available**<br>
 At this stage this script is mostly a backend tool so these Parameters are the main means of performing tasks.<br>
@@ -129,9 +133,6 @@ Parameters you'll likely not need, but they're here if you need them:
 - -RCONPort - Used to specify RCON Port. Parameter only useful if you're hosting more than one server.
 - -RCONPass - Used to specify RCON Password. Parameter only useful if you're hosting more than one server.
 
-**Home Assistant Nerds**<br>
-See [PalworldTools Home Assistant Documentation](docs/HOMEASSISTANT.md).
-
 # FAQ #
 - Nothing Yet!
 - Not seeing something here? Go to [GitHub issues](https://github.com/shupershuff/PalworldServerTools/issues) and log a request, issue or question.
@@ -160,4 +161,4 @@ Happy for you to make any modifications this script for your own needs providing
 - Thanks to Nintendo for releasing this game.
   <br>
   <br>
-Tags for Google SEO (maybe): PalworldServerTools, Shuper, whyareyoureadingthesetags, Pal World, Server Administration, admin, RCON, stillreadingthesetags, palworld dedicated server, palworld server, didyouspotthespellingerrorinoneofthetags, powershell, therearenospellingerrorsorarethere, pocketable-monsters
+Tags for Google SEO (maybe): PalworldServerTools, Shuper, whyareyoureadingthesetags, Pal World, Server Administration, admin, RCON, stillreadingthesetags, palworld dedicated server, palworld server, palworldtools, didyouspotthespellingerrorinoneofthetags, powershell, therearenospellingerrorsorarethere, pocketable-monsters

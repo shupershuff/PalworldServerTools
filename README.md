@@ -19,16 +19,16 @@ You can also review the log file for what's happening when you're running comman
 ## Features:
 **RCON Calls**<br>
 You can run RCON commands to retrieve data or initiate server actions.<br>
-Server Info:
-Retrieve Info (or specifically Servername or server Version provided by info), Players online (including Player Count).<br>
-Server Commands:
-Schedule a shutdown (with a message), shutdown immediately, force a save, broadcast a message.
+Retrieve Server Info (or specifically Servername or server Version provided by info), Players online (including Player Count).<br>
+<br>
+Issue Server Commands:<br>
+Schedule a shutdown (with a message), shutdown immediately, force a save, broadcast a message.<br>
 Note: Kick and Ban not implemented yet, Game bug not allowing messages with spaces to be sent.<br>
 
-**Shutdown Reminders**
-TBC a better version of this feature will be in release in v1.1.0
-Want your server to restart daily but want to give users some warning?
-When using the script to launch the server again it will schedule a shutdown (time to shutdown is configured by you in config.xml)
+**Shutdown Reminders**<br>
+Want your server to restart daily but want to give users some warning?<br>
+When using the script to launch the server again it will schedule a shutdown (time to shutdown is configured by you in config.xml)<br>
+NOTE: An improved version of this feature will be in release in v1.1.0 which will enable multiple reminders in an increasing frequency when server is about to restart.<br>
 
 **Daily Settings Switcher**<br>
 Run daily events on your server! That's right you can have different settings for each day of the week.<br>
@@ -37,12 +37,14 @@ Example Idea below:<br>
 ![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/6adabee0-8a00-422d-a873-7ff469bc871f)<br>
 
 **Server Admin**<br>
-You can check for updates, initiate updates, start and stop the server.<br>
+You can check for updates (manually and at server launch), initiate updates, start and stop the server.<br>
 
-Note: Auto Update feature not implemented yet but planned.
+Note: Kick and Ban not implemented yet<br>
+Note: Auto Update feature not implemented yet but plan to have a feature to regularly check for new versions and if so force a restart and update.<br>
 
 **Backups**<br>
-Not available yet, coming soon<br>
+Not available yet, coming soon in v1.1.0. This will sort backups into hourlies, dailies and monthlies.<br>
+Will also supply a guide on how you can have your backup folder sync to the cloud, for free, essentially the same instructions I wrote for Valheim: https://www.reddit.com/r/valheim/comments/lxjdu7/guide_auto_cloud_backup_your_valheim_worldplayer/?rdt=33007
 
 **Useful for those with Home Assistant**<br>
 For Home Assistant users, Using HASS.Agent on your windows PC you can setup PowerShell based sensors/commands to retrieve/send data to the server.<br>
@@ -50,18 +52,20 @@ You can setup a card like this and share it with your players/mods for basic rem
 ![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/6c331e8c-e8a2-4fbb-a685-b7bff4a3b313)<br>
 
 # Setup Information #
-**Download Script Release, ARRCON.exe and SteamCMD**
+**Download Script Release, ARRCON.exe and SteamCMD**<br>
 1. Download ARRCON from https://github.com/radj307/ARRCON and place the .exe somewhere on your PC (anywhere is fine).
 2. Download Latest PalworldServerTools Release from my Github [here](https://github.com/shupershuff/PalworldServerTools/releases/latest).
 3. Extract PalworldServerTools to any folder you want, I would recommend putting the files in the same folder as palserver.exe
 4. TBC SteamCMD steps
 
 **Optional - Configure your .ini files**<br>
-Section TBC but basically the script will be able to load any files ending with .ini in this folder "<SERVERPATH>\Pal\Saved\Config\WindowsServer\CustomSettings\".<br>
-You can then mention the names of these in the config.xml file for them to load on a given day. Using this script means that PalWorldSettings.ini will be overwritten each time you launch the server, so any edits to game settings should be run out of this folder.<br>
-Configuring the ini files themselves is essentially just a case of specifying the available game config parameters which you can see on Palworlds site [here](https://tech.palworldgame.com/optimize-game-balance).<br>
-If you don't want to use this feature then set each day in config.xml to the same value as NormalSettingsName
-1. TBC
+If you want the script to load different server settings depending on what day it is, you'll need to create the .ini files. Otherwise you can skip this section.<br>
+Please note that the way that this feature works if the script is run with the -startthemed parameter, it will overwrite PalworldSettings.ini with the contents of your custom .ini files.<br>
+1. Copy the PalWorldSettings.ini from "<SERVERPATH>\Pal\Saved\Config\WindowsServer\" to "<SERVERPATH>\Pal\Saved\Config\WindowsServer\CustomSettings".<br>
+   a. Note that if you want to store the custom settings in a different location (eg a folder path that's sync'd to the cloud), this is fine but you must specify the location in the config.xml file (covered in the next section).<br>
+2. Rename the file you just copied to the custom folder to the name of the theme eg "Monday Funday.ini"
+3. Edit this file to have the configuration options you want. See [Palworld Documentation](https://tech.palworldgame.com/optimize-game-balance) on the options available.
+4. Ensure you mention the names of the .ini files you want to use in config.xml (covered in the next section). If you don't want to use this feature then set each day in config.xml to the same value as NormalSettingsName.
 
 **Configure the XML file**
 Section TBC but the config.xml file should mostly be self explanatory with the descriptions above each config option.<br>
@@ -80,18 +84,19 @@ Section TBC but the config.xml file should mostly be self explanatory with the d
 - Monday..Sunday - Specify what settings (.ini) file you want to load from for each day of the week. Default "Normal Settings"
 Currently there is some basic validation to check if *some* of the info in the config file is valid.<br>
 
-**Test Script**<br>
-Section TBC but recommend opening a PowerShell instance and running script with the various parameters you intend to use to test that everything works before you setup scheduled tasks or sensors.
-
-You'll want to test the functions first and ensure there aren't any errors due to misconfiguration.
-1. TBC
+**Testing Script**<br>
+You'll want to test the functions first and ensure there aren't any errors due to misconfiguration.<br>
+1. In Windows Explorer, browse to the folder where the script is sitting. In the Folder Path/Address bar type in powershell and press enter. This will open a Powershell terminal set to your scripts directory.<br>
+![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/ef656764-1a45-4f6f-83ae-03a861d118a3)<br>
+2. Enter in "& '.\PalworldServerTools.ps1' -info" to test (info as an example parameter). Obviously change the parameter for any other things you want to test.
+3. If there are issues, you can review the log file in the folder where the script lives for further information.
 
 **Configure Task Scheduler**<br>
 1. TBC
 
 **Launch Parameters available:**<br>
 At this stage this script is mostly a backend tool so these Parameters are the main means of performing tasks.<br>
-Parameters utilizing RCON:
+Parameters utilizing RCON:<br>
 - -Info - RCON request to return server Info.
 - -Version - Used to specifically return server version text provided by -info
 - -ServerName - Used to specifically return server name text provided by -info
@@ -106,7 +111,7 @@ Parameters utilizing RCON:
 
 Server Launch and misc Parameters:
 - -StartNoTheme - Will check for updates and start the server using your "Normal" settings
-- -StartThemed - Will check for updates and start the server using the 'themed' settings for whatever day it is
+- -StartThemed - Will check for updates and start the server using the 'themed' settings for whatever day it is. NOTE that this will overwrite PalworldSettings.ini with the contents of the .ini file you've specified in config.xml
 - -NoUpdate - To be used in conjuntion with -StartNoTheme or -StartThemed so that server starts immediately without checking for updates.
 - -UpdateOnly - Will launch the script to update the Palworld server.
 - -UpdateCheck - Used to check if there's updates available (but not update) and return either "Version Up to date" or "Update Available"
@@ -141,7 +146,7 @@ TBC - explain setup<br>
 - Unable to broadcast any messages with spaces in them for broadcast or shutdownmessage. Appears to be a game bug.
 
 # Usage and Limitations #
-Happy for you to make any modifications this script for your own needs providing:
+Happy for you to make any modifications this script for your own needs providing:<br>
  - Any variants of this script are never sold.
  - Any variants of this script published online should always be open source.
  - Any variants of this script are never modifed to enable or assist in any malicious behaviour including (but not limited to): Bannable Mods, Cheats, Exploits, Phishing, Botting.

@@ -1,7 +1,30 @@
 # Overview
-TBC
-## Hass.Agent Setup
-TBC
+If you're a Home Assistant user and want to create a dashboard with server controls for yourself or even share with a friend... Well you can!<br>
+
+## HASS.Agent Setup
+HASS.Agent is a brilliant tool that can be used by Home Assistant to execute commands or retrieve data from sensors on your computer.<br>
+<br>
+**Installation**<br>
+The agent can be found here: https://github.com/LAB02-Research/HASS.Agent<br>
+Installation instructions can be seen here:<br>
+https://hassagent.readthedocs.io/en/latest/installation-and-configuration-summary<br>
+
+**Sensors Configuration**<br>
+Note, if you've confirmed that your script is running successfully I would recommend adding the parameter -NoLogging so your log file doesn't get added too each time one of these sensors refresh.<br>
+Command used that's obscured in the below screenshot is:<br>
+```C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File 'C:\Palworld Server\.PalworldServerTools.ps1' -info -NoLogging```<br>
+![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/2782b8a9-4e33-42cd-adfd-694494fa5cba)<br>
+<br>
+For sensors that read text files (eg TodaysTheme.txt) I used this basic command:<br>
+```get-content 'C:\Palworld Server\TodaysTheme.txt'```
+
+**Commands**<br>
+Note: As we are issuing commands I would recommend NOT putting the -NoLogging parameter in.<br>
+For starting scheduled tasks:<br>
+```C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -command "Get-ScheduledTask -TaskName 'Start Palworld Server' | Start-ScheduledTask"```<br>
+For Issuing RCON commands:<br>
+```C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File "C:\Palworld Server\.PalworldServerTools.ps1" -Save```<br>
+![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/7f4e165d-582c-47a7-bbc3-e94a92924b51)<br>
 
 ## Lovelace Card ##
 The yaml below is what I use on my Lovelace card.<br>
@@ -14,14 +37,14 @@ I've added comments to the YAML below but to summarise, the conditions perform t
 - If serverhost is powered on, Server is running but needs an udpate, show a an update and restart option.
 ![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/f144645f-bbc8-45e9-9224-6b8b486766d3)<br>
 
-**YAML**<br>
+**YAML to configure the card**<br>
 I will note that I'm not an expert with Home Assistant by any means, so there may be a more efficient way of creating these cards.<br>
 Feel free to provide improvement suggestions or show me what you've setup!<br>
 ```
 type: conditional
 conditions: # Is computer checking in. If it's unavailable then it's turned off.
   - condition: state
-    entity: sensor.pchostname_palworld_versionc_usernotificationstate
+    entity: sensor.ExampleHostname_palworld_versionc_usernotificationstate
     state_not: unavailable
 card:
   square: false
@@ -31,7 +54,7 @@ card:
       entities:
         - type: conditional
           conditions: # If PalServer-Win64-Test-CMD.exe is not running.
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state_not: '1'
           row:
             type: text
@@ -40,7 +63,7 @@ card:
             icon: mdi:server
         - type: conditional
           conditions:
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
             type: text
@@ -49,7 +72,7 @@ card:
             icon: mdi:server
         - type: conditional
           conditions: # If PalServer.exe is not running.
-            - entity: sensor.pchostname_processactive_palserver
+            - entity: sensor.ExampleHostname_processactive_palserver
               state_not: '1'
           row:
             type: text
@@ -58,7 +81,7 @@ card:
             icon: mdi:server
         - type: conditional
           conditions: # If PalServer.exe is running.
-            - entity: sensor.pchostname_processactive_palserver
+            - entity: sensor.ExampleHostname_processactive_palserver
               state: '1'
           row:
             type: text
@@ -67,50 +90,50 @@ card:
             icon: mdi:server
         - type: conditional
           conditions: # If PalServer-Win64-Test-CMD.exe is running.
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
-            entity: sensor.pchostname_palworld_server_name
+            entity: sensor.ExampleHostname_palworld_server_name
             icon: mdi:rename
             name: Server Name
         - type: conditional
           conditions: # If PalServer-Win64-Test-CMD.exe is running, show todays theme sensor.
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
-            entity: sensor.pchostname_palworld_todays_theme
+            entity: sensor.ExampleHostname_palworld_todays_theme
             icon: mdi:rename
             name: Todays Theme
         - type: conditional
           conditions: # If PalServer-Win64-Test-CMD.exe is running, show version sensor
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
-            entity: sensor.pchostname_palworld_version
+            entity: sensor.ExampleHostname_palworld_version
             icon: mdi:update
             name: Version
         - type: conditional
           conditions: # If PalServer-Win64-Test-CMD.exe is running, show updatecheck status sensor
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
-            entity: sensor.pchostname_palworld_update_available
+            entity: sensor.ExampleHostname_palworld_update_available
             icon: mdi:update
             name: Update Status
         - type: conditional
           conditions: # If PalServer-Win64-Test-CMD.exe is running, showplayers who online
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
-            entity: sensor.pchostname_palworld_players
+            entity: sensor.ExampleHostname_palworld_players
             name: Players
             icon: mdi:bug-play-outline
         - type: conditional
           conditions: # If PalServer-Win64-Test-CMD.exe is running, show count of players who are online
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
-            entity: sensor.pchostname_palworld_player_count
+            entity: sensor.ExampleHostname_palworld_player_count
             name: Player Count
             icon: mdi:counter
       title: PalWorld Server Status
@@ -118,61 +141,61 @@ card:
       entities:
         - type: conditional
           conditions: # If PalServer-Win64-Test-CMD.exe is not running and steam CMD is not running (ie, not in the middle of an update), show the start server button, 
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state_not: '1'
-            - entity: sensor.pchostname_processactive_steamcmd
+            - entity: sensor.ExampleHostname_processactive_steamcmd
               state_not: '1'
           row:
-            entity: button.pchostname_palworldstartserver
+            entity: button.ExampleHostname_palworldstartserver
             name: Start Server
             icon: mdi:controller
         - type: conditional
           conditions: # If there's an update available, server is online and not currently updating, show update button
-            - entity: sensor.pchostname_palworld_update_available
+            - entity: sensor.ExampleHostname_palworld_update_available
               state: Update Available!
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
-            - entity: sensor.pchostname_processactive_steamcmd
+            - entity: sensor.ExampleHostname_processactive_steamcmd
               state_not: '1'
           row:
-            entity: button.pchostname_palworldupdateserver
+            entity: button.ExampleHostname_palworldupdateserver
             name: Update and Restart Server
             icon: mdi:update
         - type: conditional
           conditions: # If server is running, show this stop button
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
-            entity: button.pchostname_palworldstopservergracefully30
+            entity: button.ExampleHostname_palworldstopservergracefully30
             name: Stop Server Gracefully (30 Seconds)
             icon: mdi:hand-back-right
         - type: conditional
           conditions: # If server is running, show this stop button
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
-            entity: button.pchostname_palworldstopservergracefully10
+            entity: button.ExampleHostname_palworldstopservergracefully10
             name: Stop Server Gracefully (10 Seconds)
             icon: mdi:hand-back-right
         - type: conditional
           conditions: # If server is running, show this stop now button
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
-            entity: button.pchostname_palworldstopservernow
+            entity: button.ExampleHostname_palworldstopservernow
             name: Stop Server NOW
             icon: mdi:octagon
         - type: conditional
           conditions: # If server is running, show this Save button
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
-            entity: button.pchostname_palworldsaveserver
+            entity: button.ExampleHostname_palworldsaveserver
             name: Save Server
             icon: mdi:content-save
         - type: conditional
           conditions: # if steamcmd process is active, server must be updating.
-            - entity: sensor.pchostname_processactive_steamcmd
+            - entity: sensor.ExampleHostname_processactive_steamcmd
               state: '1'
           row:
             type: text
@@ -181,7 +204,7 @@ card:
             icon: mdi:update
         - type: conditional
           conditions: # I haven't figured out a way to send broadcasts yet, I'll probably investigate once Palworld devs resolve the bug with server messages not allowing space characters.
-            - entity: sensor.pchostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
               state: '1'
           row:
             type: text

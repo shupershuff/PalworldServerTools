@@ -39,6 +39,7 @@ NOTE: An improved version of this feature will be in release in v1.1.0 which wil
 **Player Log**<br>
 TBC in v1.1.0
 Capture who was online at what time in a daily text file.<br>
+Also capture a csv of all players who have visited your server.<br>
 
 **Daily Settings Switcher**<br>
 Run daily events on your server! That's right you can have different settings for each day of the week.<br>
@@ -115,7 +116,7 @@ Parameters utilizing RCON:<br>
 - -Version - Used to specifically return server version text provided by -info
 - -ServerName - Used to specifically return server name text provided by -info
 - -ShowPlayers - Show the names of all logged in players. TBC FROM v1.1.0 this will instead show a comma separated response, the exact response you'd get from RCON.
-- -ShowPlayerNamess - TBC FROM v1.1.0 ONWARDS Show the names of all logged in players.
+- -ShowPlayerNames - TBC FROM v1.1.0 ONWARDS Show the names of all logged in players.
 - -ShowPlayerCount - Number of players online
 - -Shutdown - Used to initiate a planned shutdown. Can be used in conjunction with -shutdowntimer and -shutdownmessage. The script will also initiate a broadcast message notifying of shutdown when it's imminent.
 - -ShutdownTimer - Optional parameter. Used to specify how many seconds until shutdown should occur. If not specified it will use the value from the config file.
@@ -127,6 +128,7 @@ Parameters utilizing RCON:<br>
 - -Save - Force server to save data.
 
 Server Launch and misc Parameters:
+- -backup - TBC FROM v1.1.0. Will initiate a backup
 - -StartNoTheme - Will check for updates and start the server using your "Normal" settings
 - -StartThemed - Will check for updates and start the server using the 'themed' settings for whatever day it is. NOTE that this will overwrite PalworldSettings.ini with the contents of the .ini file you've specified in config.xml
 - -NoUpdate - To be used in conjuntion with -StartNoTheme or -StartThemed so that server starts immediately without checking for updates.
@@ -137,6 +139,7 @@ Server Launch and misc Parameters:
 
 Parameters you'll likely not need, but they're here if you need them:
 - -ServerPath - Used to specify server path. Parameter only useful if you're hosting more than one server.
+- -ShowPlayersNoHeader - TBC FROM v1.1.0 Show the names of all logged in players, but without the CSV header.
 - -ThemeSettingsPath - Used to specify where custom ini files live. Parameter only useful if you're hosting more than one server and can be left blank to assume the default location.
 - -LaunchParameters - Used to specify custom launch parameters if they differ from the default. Can be left blank.
 - -HostIP - Used to specify server address/domain. Parameter only useful if you're hosting more than one server.

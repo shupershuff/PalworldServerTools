@@ -11,12 +11,14 @@
 	<!-- Password for RCON connection. Can instead be specified with launch parameter -RCONPass -->
 	<RCONPass>YOUR_RCON_PASSWORD</RCONPass>
 	
-	<!-- Path to where Steamcmd.exe is located. -->
+	<!-- Path to where Steamcmd.exe is located. Leave blank if you're not using SteamCMD. -->
 	<SteamCMDPath></SteamCMDPath>
 	<!-- Path to where ARRCON.exe is located.-->
 	<ARRCONPath></ARRCONPath>
 	<!-- Path to the dedicated server files -->
 	<ServerPath></ServerPath>
+	<!-- Path of where backups are stored. Leave blank for default backup path (<SERVER>\Pal\Saved\SaveGames\Backup) or specify your own. -->
+	<BackupPath></BackupPath>
 	
    <!-- Setting Switcher Configuration Options -->
 	<!-- Specify where Custom Settings should be stored.
@@ -29,8 +31,6 @@
 	
 	<!-- How many seconds notice should end users get. Default 90 -->
 	<AutoShutdownTimer>90</AutoShutdownTimer>
-	<!-- What warning should users get. Note, as of 1.3.0, messages with spaces can't be sent :( -->
-	<AutoShutdownMessage>Server_Shutting_down!</AutoShutdownMessage>
 
 	<!-- What Config file should be used on what day.
 	Simply add the filename of each config file you've made, without the extension.

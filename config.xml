@@ -11,11 +11,11 @@
 	<!-- Password for RCON connection. Can instead be specified with launch parameter -RCONPass -->
 	<RCONPass>YOUR_RCON_PASSWORD</RCONPass>
 	
-	<!-- Path to where Steamcmd.exe is located. Leave blank if you're not using SteamCMD. -->
+	<!-- Path to where Steamcmd.exe is located. If left blank this defaults to 'C:\Program Files\SteamCMD'. -->
 	<SteamCMDPath></SteamCMDPath>
-	<!-- Path to where ARRCON.exe is located.-->
+	<!-- Path to where ARRCON.exe is located. If left blank this defaults to 'C:\Program Files\ARRCON'. -->
 	<ARRCONPath></ARRCONPath>
-	<!-- Path to the dedicated server files -->
+	<!-- Path to the dedicated server files. Cannot be left blank. -->
 	<ServerPath></ServerPath>
 	<!-- Path of where backups are stored. Leave blank for default backup path (<SERVER>\Pal\Saved\SaveGames\Backup) or specify your own. -->
 	<BackupPath></BackupPath>

@@ -29,8 +29,8 @@
 	<!--The name of the 'Standard' .ini file you want to use when there's no special events. -->
 	<NormalSettingsName>Normal Settings</NormalSettingsName>
 	
-	<!-- How many seconds notice should end users get. Default 90 -->
-	<AutoShutdownTimer>90</AutoShutdownTimer>
+	<!-- How many seconds notice should end users get before Server shutdown. Default 120 -->
+	<AutoShutdownTimer>120</AutoShutdownTimer>
 
 	<!-- What Config file should be used on what day.
 	Simply add the filename of each config file you've made, without the extension.

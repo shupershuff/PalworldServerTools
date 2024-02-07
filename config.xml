@@ -17,14 +17,14 @@
 	<ARRCONPath></ARRCONPath>
 	<!-- Path to the dedicated server files. Cannot be left blank. -->
 	<ServerPath></ServerPath>
-	<!-- Path of where backups are stored. Leave blank for default backup path (<SERVER>\Pal\Saved\SaveGames\Backup) or specify your own. -->
+	<!-- Path of where backups are stored. Leave blank for default backup path (<ServerPath>\Pal\Saved\SaveGames\Backup) or specify your own. -->
 	<BackupPath></BackupPath>
 	
    <!-- Setting Switcher Configuration Options -->
 	<!-- Specify where Custom Settings should be stored.
-	Leave Blank for the default: "$ServerPath\Pal\Saved\Config\WindowsServer\CustomSettings\"
+	Leave Blank for the default: "<ServerPath>\Pal\Saved\Config\WindowsServer\CustomSettings\"
 	Change this if you've stored your settings files elsewhere.
-	You can also specify this as a launch parameter -ThemeSettingsPath in case you're running several servers from one host.-->
+	You can also specify this as a launch parameter -ThemeSettingsPath in case you're running several servers from one host. -->
 	<ThemeSettingsPath></ThemeSettingsPath>
 	<!--The name of the 'Standard' .ini file you want to use when there's no special events. -->
 	<NormalSettingsName>Normal Settings</NormalSettingsName>

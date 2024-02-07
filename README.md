@@ -98,8 +98,8 @@ Please note that the way that this feature works if the script is run with the -
 3. Edit this file to have the configuration options you want. See [Palworld Documentation](https://tech.palworldgame.com/optimize-game-balance) on the options available.
 4. Ensure you mention the names of the .ini files you want to use in config.xml (covered in the next section). If you don't want to use this feature then set each day in config.xml to the same value as NormalSettingsName.
 
-**Configure the XML file**
-Section TBC but the config.xml file should mostly be self explanatory with the descriptions above each config option.<br>
+**Configure the XML file**<br>
+Configure the XML file with the settings appropriate for you. Descriptions of each config below:<br>
 - HostIP - IP of the Server.
 - GamePort - Port that the server uses for connections. Default 8211.
 - CommunityServer - Set to True if you want the server to be visibile in the community servers list
@@ -153,6 +153,7 @@ Server Launch and misc Parameters:
 - -Backup - TBC FROM v1.1.0. Will initiate a backup and save it to "<BackupPath>\<Year>\<MonthName>\<Day>\<TimeOfBackup>\"
 - -Start - Will check for updates and start the server using your "Normal" settings
 - -StartThemed - Will check for updates and start the server using the 'themed' settings for whatever day it is. NOTE that this will overwrite PalworldSettings.ini with the contents of the .ini file you've specified in config.xml
+- -LogPlayers - Write to PlayersOnline.txt so you can see who was online at what time. You can use this alongside any of the ShowPlayers parameters.
 - -NoUpdate - To be used in conjuntion with -StartNoTheme or -StartThemed so that server starts immediately without checking for updates.
 - -UpdateOnly - Will launch the script to update the Palworld server.
 - -UpdateCheck - Used to check if there's updates available (but not update) and return either "Version Up to date" or "Update Available"

@@ -17,7 +17,7 @@ Note: It's early days, I'll look at developing a front end, auto refreshing CLI 
 You can also review the log file for what's happening when you're running commands that don't have a lot of CLI output.<br>
 
 ## Features:
-**RCON Calls**<br>
+**Server Admin and RCON Calls**<br>
 You can run RCON commands to retrieve data or initiate server actions.<br>
 Receive Server Information:
 - INFO (or specifically Servername or server Version provided by info)
@@ -27,55 +27,61 @@ Issue Server Commands:
 - Schedule a shutdown with a message
 - Shutdown immediately
 - Force a save
-- Broadcast a message.
-
-Note: Kick and Ban not implemented yet (will be in v1.1.0)
+- Broadcast a message*.
 - Kick a player by using either their SteamID or playername.
 - Ban a player by using either their steamID or playername. Script has the ability to ban player even if they're offline.
 
-Note: Game bug not allowing messages with spaces to be sent, underscores should be used instead.<br>
+You can also check for updates (manually and at server launch), initiate updates, start and stop the server.<br>
+
+\* Game bug not allowing messages with spaces to be sent, underscores should be used instead.<br>
+Note: An Auto Update feature is not implemented yet but I plan to add have a feature to regularly check for new versions and if so force a restart and update.<br>
 
 **Shutdown Reminders**<br>
-Want your server to restart daily but want to give users some warning?<br>
-When using the script to launch the server again it will schedule a shutdown (time to shutdown is configured by you in config.xml)<br>
-NOTE: An improved version of this feature will be in release in v1.1.0 which will enable multiple reminders in an increasing frequency when server is about to restart.<br>
+Want your server to restart daily or simply shutdown but want to give users some warning?<br>
+When using the script to launch the server again, it will schedule a shutdown (time to shutdown is configured by you in config.xml).<br>
+This will notify users periodically and more frequently the closer the server is to shutting down.<br>
+<sub>Shutting down server:</sub>
+![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/ce6bda1d-3c67-40fb-b1d3-419dd4d78a0b)<br>
+<sub>Starting Server while it's already running will initiate a graceful restart:</sub>
+![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/60f330cf-b0ea-43ef-adbc-811cd74e44a9)<br>
 
 **Player Log**<br>
-TBC in v1.1.0
-Capture who was online at what time in a daily text file.<br>
-Also capture a csv of all players who have visited your server and any playernames they may have used.<br>
+Capture a csv of all players who have visited your server, any playernames they may have used, when they were first and last seen.<br>
 This is useful if you need to ban someone who was on your server but is not currently online.<br>
+This is also useful if you want to enable whitelisting later on and need to know your players SteamID's.<br>
+You can also optionally capture who was online at what time in a daily text file (using -LogPlayers).<br>
 
-**Server Setup Helper**
-TBC in v1.1.0
-Running the script with -setup will run through steps to setup SteamCMD, install Palworld Dedicated server, install ARRCON and configure Inbound & Outbound Firewall rules required.
-This means you're only left with the task of configuring your Portforwarding and configuring your Palworld Server settings.
+**Server Setup Helper**<br>
+Running the script with -setup will run through steps to install Palworld Dedicated server and configure Inbound & Outbound Firewall rules required.<br>
+If not setup already script will also setup SteamCMD and ARRCON.<br>
+This means you're only left with the task of configuring your Portforwarding and configuring your Palworld Server settings.<br>
 
 **Daily Settings Switcher**<br>
 Run daily events on your server! That's right you can have different settings for each day of the week.<br>
 Simply create the custom config (.ini) files and specify which day should load them. See [Setup Information](#setup-information) for more details.<br>
+![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/2bd9fa3c-3bc4-48df-ba1a-2eb65834197e)<br>
 Example Idea below:<br>
 ![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/6adabee0-8a00-422d-a873-7ff469bc871f)<br>
 
-**Server Admin**<br>
-You can check for updates (manually and at server launch), initiate updates, start and stop the server.<br>
-
-Note: Kick and Ban not implemented yet, will be in v1.1.0 TODAY!<br>
-Note: Auto Update feature not implemented yet but plan to have a feature to regularly check for new versions and if so force a restart and update.<br>
-
 **Backups**<br>
-Not available yet, coming TODAY in v1.1.0.<br>
 When running the -backup parameter this will save a backup into a backup folder. Unless you specify a custom backup location in config, the default path for backups is "<ServerPath>\Pal\Saved\SaveGames\Backups".<br>
-Feature is intended to be used on an hourly basis (using task scheduler) but can be used on a more frequently if desired.
-Backup feature includes an automatic cleanup to prevent disk space blowout:
+Feature is intended to be used on an hourly basis (using task scheduler) but can be used on a more frequently if desired.<br>
+This feature only works when the server is online to prevent useless backups being made.
+Backup feature includes an automatic cleanup to prevent disk space blowout:<br>
 - For any backups older than 30 days, the last backup of that month will be retained
 - For any backups older than 7 days, the last backup of that day will be retained
 - All backups taken within the last 7 days will be retained
 
-Note: 'Days' is not taken from current date but rather by assessing how many days worth of backups you have and working backwards. EG If you go for 7 days with no backups, you'll still have 7 days worth of hourly restore points from the previous week.
+![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/3b626b87-5630-4dcd-b5fa-4385555d064d)<br>
+Note: 'Days' is not taken from current date but rather by assessing how many days worth of backups you have and working backwards. EG If you go for 7 days with no backups, you'll still have 7 days worth of hourly restore points from the previous week.<br>
+<br>
+Recommend that you save the backups to a Cloud sync'd location (eg. OneDrive, DropBox, Sync.com etc etc).<br>
+Optionally you can also redirect your entire SaveGames folder to the cloud using Symbolic links, see this reddit post for an old guide I wrote up on this: https://www.reddit.com/r/valheim/comments/lxjdu7/guide_auto_cloud_backup_your_valheim_worldplayer/<br>
 
-Recommend that you save the backups to a Cloud sync'd location (eg. OneDrive, DropBox, Sync.com etc etc).
-Optionally you can also redirect your entire SaveGames folder to the cloud using Symbolic links, see this reddit post for an old guide I wrote up on this: https://www.reddit.com/r/valheim/comments/lxjdu7/guide_auto_cloud_backup_your_valheim_worldplayer/
+**Whitelisting**<br>
+TBC FEATURE COMING SOON IN A FUTURE VERSION.<br>
+Ability to auto kick players who aren't in your whitelist.<br>
+Useful for if you want to have your server be passwordless for easier access or if you have people sneaking into a passworded server.<br>
 
 **Useful for those with Home Assistant**<br>
 For Home Assistant users, Using HASS.Agent on your windows PC you can setup PowerShell based sensors/commands to retrieve/send data to the server.<br>
@@ -85,15 +91,15 @@ For more info see [PalworldServerTools Home Assistant Documentation](docs/HOMEAS
 
 # Setup Information #
 **Download Script Release**<br>
-1. Download Latest PalworldServerTools Release from my Github [here](https://github.com/shupershuff/PalworldServerTools/releases/latest).
-2. Extract PalworldServerTools to any folder you want, I would recommend putting the files in the same folder as palserver.exe
-Note that ARRCON and SteamCMD will be automatically installed once script is run in a later step.
+1. Download Latest PalworldServerTools Release from my Github [here](https://github.com/shupershuff/PalworldServerTools/releases/latest).<br>
+2. Extract PalworldServerTools to any folder you want, I would recommend putting the files in the same folder as palserver.exe<br>
+Note that ARRCON and SteamCMD will be automatically installed once script is run in a later step.<br>
 
 **Optional - Configure your .ini files**<br>
 If you want the script to load different server settings depending on what day it is, you'll need to create the .ini files. Otherwise you can skip this section.<br>
 Please note that the way that this feature works if the script is run with the -startthemed parameter, it will overwrite PalworldSettings.ini with the contents of your custom .ini files.<br>
 1. Copy the PalWorldSettings.ini from "<SERVERPATH>\Pal\Saved\Config\WindowsServer\" to "<SERVERPATH>\Pal\Saved\Config\WindowsServer\CustomSettings".<br>
-   a. Note that if you want to store the custom settings in a different location (eg a folder path that's sync'd to the cloud), this is fine but you must specify the location in the config.xml file (covered in the next section).<br>
+   * Note that if you want to store the custom settings in a different location (eg a folder path that's sync'd to the cloud), this is fine but you must specify the location in the config.xml file (covered in the next section).<br>
 2. Rename the file you just copied to the custom folder to the name of the theme eg "Monday Funday.ini"
 3. Edit this file to have the configuration options you want. See [Palworld Documentation](https://tech.palworldgame.com/optimize-game-balance) on the options available.
 4. Ensure you mention the names of the .ini files you want to use in config.xml (covered in the next section). If you don't want to use this feature then set each day in config.xml to the same value as NormalSettingsName.
@@ -112,7 +118,6 @@ Configure the XML file with the settings appropriate for you. Descriptions of ea
 - ThemeSettingsPath - Path to where your custom.ini files live. Leave blank for the default path to be used (<SERVERPATH>\Pal\Saved\Config\WindowsServer\CustomSettings\")
 - NormalSettingsName - Name of the file that you want your standard server settings (.ini file) to load from. Default "Normal Settings"
 - AutoShutdownTimer - Used for restarting server. Time that server should wait until shutdown to give players a bit of notice.
-- AutoShutdownMessage - This XML config will be removed in v1.1.0
 - Monday..Sunday - Specify what settings (.ini) file you want to load from for each day of the week. Default "Normal Settings"
 Currently there is some basic validation to check if *some* of the info in the config file is valid.<br>
 
@@ -136,21 +141,19 @@ Parameters utilizing RCON:<br>
 - -Info - RCON request to return server Info.
 - -Version - Used to specifically return server version text provided by -info
 - -ServerName - Used to specifically return server name text provided by -info
-- -ShowPlayers - Show the names of all logged in players. TBC FROM v1.1.0 this will instead show a comma separated response, the exact response you'd get from RCON.
-- -ShowPlayerNames - TBC FROM v1.1.0 ONWARDS Show the names of all logged in players.
-- -ShowPlayerCount - Number of players online
-- -Shutdown - Used to initiate a planned shutdown. Can be used in conjunction with -shutdowntimer and -shutdownmessage. The script will also initiate a broadcast message notifying of shutdown when it's imminent.
-- -ShutdownTimer - Optional parameter. Used to specify how many seconds until shutdown should occur. If not specified it will use the value from the config file.
-- -ShutdownMessage - To use this use -broadcast "message". Used to customise the shutdown message.
+- -ShowPlayers - Show the Names, PlayerUID and SteamID of all logged in players.
+- -ShowPlayerNames - Show comma separated names of all logged in players.
+- -ShowPlayerCount - Number of players online.
+- -Shutdown - Used to initiate a planned shutdown. For general usage use: -Shutdown <SecondsToShutdown> <Message>. Can also be used with -ShutdownTimer & -ShutdownMessage
 - -Broadcast - To use this use -broadcast "message". Sends a message to all players. Note that as of the time of writing, it's not possible to send messages with spaces in them (game limitation).
 - -DoExit - Schedule an immediate shutdown of the server.
-- -Kick (or -kickplayer) - TBC FROM v1.1.0 ONWARDS Used to kick a player. Script allows you to specify either steam ID or playername to kick.
-- -Ban (or -banplayer) - TBC FROM v1.1.0 ONWARDS Used to ban a player. Script allows you to specify either steam ID or playername to ban eg -ban shupershuff or -ban 1234567890123. If specified player isn't online, script will check against playernames and steam ID's of players who have previously joined the server. Note that if used from a web front end (eg Home Assistant) where CLI prompts can't be seen, playername or steamID MUST be typed perfectly.
+- -Kick (or -kickplayer) - Used to kick a player. Script allows you to specify either steam ID or playername to kick.
+- -Ban (or -banplayer) - Used to ban a player. Script allows you to specify either steam ID or playername to ban eg -ban shupershuff or -ban 1234567890123. If specified player isn't online, script will check against playernames and steam ID's of players who have previously joined the server. Note that if used from a web front end (eg Home Assistant) where CLI prompts can't be seen, playername or steamID MUST be typed perfectly.
 - -Save - Force server to save data.
 
 Server Launch and misc Parameters:
 - -Setup - Run through steps to setup SteamCMD, Install Palworld Dedicated server, install ARRCON and configure Inbound & Outbound Firewall rules required.
-- -Backup - TBC FROM v1.1.0. Will initiate a backup and save it to "<BackupPath>\<Year>\<MonthName>\<Day>\<TimeOfBackup>\"
+- -Backup - If server is online, this will initiate a backup and save it to "<BackupPath>\<Year>\<MonthName>\<Day>\<TimeOfBackup>\"
 - -Start - Will check for updates and start the server using your "Normal" settings
 - -StartThemed - Will check for updates and start the server using the 'themed' settings for whatever day it is. NOTE that this will overwrite PalworldSettings.ini with the contents of the .ini file you've specified in config.xml
 - -LogPlayers - Write to PlayersOnline.txt so you can see who was online at what time. You can use this alongside any of the ShowPlayers parameters.
@@ -168,6 +171,8 @@ Parameters you'll likely not need, but they're here if you need them:
 - -HostIP - Used to specify server address/domain. Parameter only useful if you're hosting more than one server.
 - -RCONPort - Used to specify RCON Port. Parameter only useful if you're hosting more than one server.
 - -RCONPass - Used to specify RCON Password. Parameter only useful if you're hosting more than one server.
+- -ShutdownTimer - Used to specify how many seconds until shutdown should occur. If not specified it will use the value from the config file. Doesn't need to be explicitly used as -Shutdown <Time> <Message> also works.
+- -ShutdownMessage - Used to customise the shutdown message. Doesn't need to be explicitly used as -Shutdown <Time> <Message> also works.
 
 # FAQ #
 - Nothing Yet!

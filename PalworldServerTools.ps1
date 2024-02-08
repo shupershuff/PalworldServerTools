@@ -157,7 +157,7 @@ Function WriteLog {
 	if ($True -eq $NewLine){#Overwrite $LogMessage to remove headers if -newline is enabled
 		$LogMessage = "                                $LogString"
 	}
-	if (($NoLogging -eq $False -or ($CustomLogFile -ne "" -and $ShowPlayers -eq $True)) -and $NoNewLine -eq $True ){#Overwrite $LogMessage to put text immediately after last line if -nonewline is enabled
+	if (($NoLogging -eq $False -or ($CustomLogFile -ne "" -and $LogPlayers -eq $True)) -and $NoNewLine -eq $True ){#Overwrite $LogMessage to put text immediately after last line if -nonewline is enabled
 		$LogContent = (Get-Content -Path $LogFile -Raw) # Read the content of the file
 		if ($logcontent -match ' \r?\n\r?\n$' -or $logcontent -match ' \r?\n$' -or $logcontent -match ' \r?\n$' -or $logcontent[-1] -eq " "){#if the last characters in the file is a space a space with one or two line breaks
 			$Space = " "
@@ -172,7 +172,7 @@ Function WriteLog {
 	}
 	while ($Complete -ne $True -or $WriteAttempts -eq 3){
 		try {
-			if (($NoLogging -eq $False -or ($CustomLogFile -ne "" -and $ShowPlayers -eq $True)) -and $NoNewLine -eq $False ){ #if user has disabled logging, eg on sensors that check every minute or so, they may want logging disabled.
+			if (($NoLogging -eq $False -or ($CustomLogFile -ne "" -and $LogPlayers -eq $True)) -and $NoNewLine -eq $False ){ #if user has disabled logging, eg on sensors that check every minute or so, they may want logging disabled.
 				Add-content $LogFile -value $LogMessage -ErrorAction Stop
 				$Complete = $True
 			}

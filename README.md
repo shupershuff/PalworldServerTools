@@ -9,7 +9,7 @@ If you notice anything funky, would like additional functionality or have any qu
 Please also see the [Planned Changes](#planned-changes-features--fixes) section below.<br>
 
 ## Use Case:
-Script is designed to be used with Task Scheduler (for updating/launching server)<br>
+At this stage, script is designed to be used locally with Task Scheduler (for updating/launching server)<br>
 Can also be used with HASS.Agent (or other tools) to issue and capture the results of RCON commands.<br>
 To use, call the script with launch parameters eg "& '.\PalworldServerTools.ps1' -save"<br>
 <br>
@@ -27,7 +27,7 @@ Issue Server Commands:
 - Schedule a shutdown with a message
 - Shutdown immediately
 - Force a save
-- Broadcast a message*.
+- Broadcast a message*
 - Kick a player by using either their SteamID or playername.
 - Ban a player by using either their steamID or playername. Script has the ability to ban player even if they're offline.
 
@@ -129,11 +129,12 @@ You'll want to test the functions first and ensure there aren't any errors due t
 3. If there are issues, you can review the log file in the folder where the script lives for further information.
 4. Note that there may be some first time run setup tasks (eg installation of ARRCON and/or SteamCMD).
 
-** Optional Home Assistant Setup**<br>
-See [PalworldServerTools Home Assistant Documentation](docs/HOMEASSISTANT.md).
+**Optional Home Assistant Setup**<br>
+See [PalworldServerTools Home Assistant Documentation](docs/HOMEASSISTANT.md).<br>
 
 **Configure Task Scheduler**<br>
-If you need help or want to see examples, see [PalworldServerTools Task Scheduler Documentation](docs/TASKSCHEDULER.md).
+If you need help or want to see examples, see [PalworldServerTools Task Scheduler Documentation](docs/TASKSCHEDULER.md).<br>
+
 ## Usage ##
 **Launch Parameters available**<br>
 At this stage this script is mostly a backend tool so these Parameters are the main means of performing tasks.<br>
@@ -145,7 +146,7 @@ Parameters utilizing RCON:<br>
 - -ShowPlayerNames - Show comma separated names of all logged in players.
 - -ShowPlayerCount - Number of players online.
 - -Shutdown - Used to initiate a planned shutdown. For general usage use: -Shutdown <SecondsToShutdown> <Message>. Can also be used with -ShutdownTimer & -ShutdownMessage
-- -Broadcast - To use this use -broadcast "message". Sends a message to all players. Note that as of the time of writing, it's not possible to send messages with spaces in them (game limitation).
+- -Broadcast - To use this use -broadcast <Message>. Sends a message to all players. Note that as of the time of writing, it's not possible to send messages with spaces in them (game limitation).
 - -DoExit - Schedule an immediate shutdown of the server.
 - -Kick (or -kickplayer) - Used to kick a player. Script allows you to specify either steam ID or playername to kick.
 - -Ban (or -banplayer) - Used to ban a player. Script allows you to specify either steam ID or playername to ban eg -ban shupershuff or -ban 1234567890123. If specified player isn't online, script will check against playernames and steam ID's of players who have previously joined the server. Note that if used from a web front end (eg Home Assistant) where CLI prompts can't be seen, playername or steamID MUST be typed perfectly.
@@ -165,8 +166,7 @@ Server Launch and misc Parameters:
 
 Parameters you'll likely not need, but they're here if you need them:
 - -ServerPath - Used to specify server path. Parameter only useful if you're hosting more than one server.
-- -ShowPlayersNoHeader - TBC FROM v1.1.0 Show the names of all logged in players, but without the CSV header.
-- -ThemeSettingsPath - Used to specify where custom ini files live. Parameter only useful if you're hosting more than one server and can be left blank to assume the default location.
+- -ShowPlayersNoHeader - Show the names of all logged in players, but without the CSV header.
 - -LaunchParameters - Used to specify custom launch parameters if they differ from the default. Can be left blank.
 - -HostIP - Used to specify server address/domain. Parameter only useful if you're hosting more than one server.
 - -RCONPort - Used to specify RCON Port. Parameter only useful if you're hosting more than one server.
@@ -176,13 +176,12 @@ Parameters you'll likely not need, but they're here if you need them:
 
 # FAQ #
 - Nothing Yet!
-- Not seeing something here? Go to [GitHub issues](https://github.com/shupershuff/PalworldServerTools/issues) and log a request, issue or question.
+
+Not seeing something here? Go to [GitHub issues](https://github.com/shupershuff/PalworldServerTools/issues) and log a request or issue.<br>
+Alternatively if you just want to have a yarn, head over to [GitHub Discussions](https://github.com/shupershuff/PalworldServerTools/discussions).<br>
 
 # Planned Changes, Features & Fixes #
-- Automate Local Backups (hourlies for 1 day, dailies, weekly) for both level data and characters.
 - Automated Server update checks
-- Playerlog file
-- Improved shutdown notifications
 - Add a means of checking whether there's a script update available from GitHub.
 - Front End CLI or better yet a proper GUI (would love help if you're any good with this sort of thing).
 - Fix stuff that doesn't work :)
@@ -202,6 +201,6 @@ Happy for you to make any modifications this script for your own needs providing
 - ChatGPT for helping with regex patterns.
 - Google.com
 - Thanks to Nintendo for releasing this game.
-  <br>
-  <br>
+<br>
+<br>
 Tags for Google SEO (maybe): PalworldServerTools, Shuper, whyareyoureadingthesetags, Pal World, Server Administration, admin, RCON, stillreadingthesetags, palworld dedicated server, palworld server, palworldtools, didyouspotthespellingerrorinoneofthetags, powershell, therearenospellingerrorsorarethere, pocketable-monsters

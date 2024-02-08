@@ -1,5 +1,5 @@
 # Overview
-PalworldServer Tools is a PowerShell script used for administering dedicated Palworld servers.
+PalworldServer Tools is a PowerShell script used for administering dedicated Palworld servers running from Windows based hosts.
 Currently this is a tool without a GUI designed to run when called by task scheduler, sensors or other scripts.
 A GUI will hopefully be developed down the track, I need to learn how to create this first!
 
@@ -203,4 +203,4 @@ Happy for you to make any modifications this script for your own needs providing
 - Thanks to Nintendo for releasing this game.
 <br>
 <br>
-Tags for Google SEO (maybe): PalworldServerTools, Shuper, whyareyoureadingthesetags, Pal World, Server Administration, admin, RCON, stillreadingthesetags, palworld dedicated server, palworld server, palworldtools, didyouspotthespellingerrorinoneofthetags, powershell, therearenospellingerrorsorarethere, pocketable-monsters
+Tags for Google SEO (maybe): PalworldServerTools, PalworldDedicatedServerTools, Shuper, whyareyoureadingthesetags, Pal World, Server Administration, admin, RCON, stillreadingthesetags, palworld dedicated server, palworld server, palworldtools, didyouspotthespellingerrorinoneofthetags, powershell, therearenospellingerrorsorarethere, pocketable-monsters, windows, microsoft

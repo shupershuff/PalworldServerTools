@@ -14,8 +14,9 @@ Instructions: See GitHub readme https://github.com/shupershuff/PalworldServerToo
 
 To Do:
 - GUI Front end and/or CLI Front End with a menu
-- Auto Update: add option for this to be called via gui (Requires GUI/background agent)
+- Auto Update: Add option for this to be called via GUI (Requires GUI/background agent)
 - Tidy up for PlayersOnline.txt so it doesn't get massive
+- Investigate having most RCON features work when script is run from remote host.
 
 Changes since 1.0.0 (next version edits):
 - Implemented Backup feature. See Github readme for explanation.
@@ -349,7 +350,7 @@ Function UpdateCheck {
 		if ($False -eq $UpdateCheck -and $Config.SteamCMDPath -ne ""){
 			if ($Running -eq $True){
 				WriteLog -info -noconsole "UpdateCheck: Server is currently running"
-				RestartShutdownNotifier
+				RCON_ShutdownRestartNotifier -Restart
 			}
 			Update -silent
 			$AppInfoNew | Out-File $AppInfoFile -Force #overwrite file with build ID
@@ -397,105 +398,10 @@ Function Update {
 		WriteLog -errorlog -nonewline "Couldn't Update :("
 	}
 }
-Function RestartShutdownNotifier {
-	RCON_Shutdown -shutdowntimer $Config.AutoShutdownTimer -shutdownmessage "Server_is_scheduled_to_shutdown..." #Schedule Shutdown
-	$Script:TimeUntilServerReset = [int]$Config.AutoShutdownTimer 
-	WriteLog -info -noconsole "RestartShutdownNotifier: "
-	WriteLog -info -nonewline ("Waiting " + ([int]$Config.AutoShutdownTimer + [int]$Delay) + " seconds for server to shutdown...")
-	$MinutePlural = "s"
-	while ($script:TimeUntilServerReset -gt 0){
-		if (Get-Process | Where-Object {$_.processname -match "palserver"}){ #if server process is still running	
-			$script:MinutesRemaining = [math]::floor($Script:TimeUntilServerReset / 60) # Calc Minutes remaining
-			$script:SecondsRemaining = $Script:TimeUntilServerReset % 60 # Calc Seconds remaining
-			while ($script:MinutesRemaining -gt 60){#if time is over an hour (it bloody shouldn't be) then wait until a more reasonable time to start sending messages.
-				start-sleep 60
-				$script:MinutesRemaining = $script:MinutesRemaining -60
-				$Script:TimeUntilServerReset = $Script:TimeUntilServerReset -60
-			}
-			if ($script:MinutesRemaining -ge 2 -and $script:SecondsRemaining -ne 0){#if there's a large amount of time left, make a nice even round time when broadcasting messages.
-				start-sleep $script:SecondsRemaining
-				$script:TimeUntilServerReset = $Script:TimeUntilServerReset - $script:SecondsRemaining
-				$script:SecondsRemaining = 0
-			}
-			Else {
-				while ($script:MinutesRemaining -eq 0 -and $script:SecondsRemaining -notin @("10","20","30","40","50")){#if time is within 60 seconds, wait until the time left is a nice round number.
-					start-sleep 1
-					$script:SecondsRemaining = $script:SecondsRemaining -1
-					$Script:TimeUntilServerReset = $Script:TimeUntilServerReset -1
-				}
-				while ($script:MinutesRemaining -eq 1 -and ($script:SecondsRemaining -ne 0 -and $script:SecondsRemaining -ne 30)){#if time is within 60 seconds, wait until the time left is either 0 or 30
-					start-sleep 1	
-					$script:SecondsRemaining = $script:SecondsRemaining -1
-					$Script:TimeUntilServerReset = $Script:TimeUntilServerReset -1
-				} 
-				$MinutePlural = ""
-			}
-			if ($Script:TimeUntilServerReset -ge 3600){#if there's more an hour send a reminder 15 minutes.
-				WriteLog -info -noconsole "RestartShutdownNotifier: "
-				WriteLog -info -nonewline ("Server_reset_in_$MinutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
-				RCON_Broadcast -BroadcastMessage ("Server_reset_in_$minutesRemaining" + "_minute$MinutePlural")
-				Start-Sleep -Seconds 900 # Wait for 15 minutes
-				$script:TimeUntilServerReset = $Script:TimeUntilServerReset -900 # Decrement the time remaining
-			}
-			elseif ($Script:TimeUntilServerReset -ge 900){#if there's between 15 and 60 mins left, send a reminder every 5 minutes
-				WriteLog -info -noconsole "RestartShutdownNotifier: "
-				WriteLog -info -nonewline ("Server_reset_in_$MinutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
-				RCON_Broadcast -BroadcastMessage ("Server_reset_in_$minutesRemaining" + "_minute$MinutePlural")
-				Start-Sleep -Seconds 300 # Wait for 300 seconds
-				$script:TimeUntilServerReset = $Script:TimeUntilServerReset -300 # Decrement the time remaining
-			}
-			elseif ($Script:TimeUntilServerReset -ge 300){#if there's between 5 and 15 mins left, send a reminder every minute
-				WriteLog -info -noconsole "RestartShutdownNotifier: "
-				WriteLog -info -nonewline ("Server_reset_in_$MinutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
-				RCON_Broadcast -BroadcastMessage ("Server_reset_in_$minutesRemaining" + "_minute$MinutePlural")
-				Start-Sleep -Seconds 60 # Wait for 60 seconds
-				$script:TimeUntilServerReset = $Script:TimeUntilServerReset -60 # Decrement the time remaining
-			}
-			Elseif ($Script:TimeUntilServerReset -ge 60){#if there's between 1 and 3 minutes left, send a reminder every 30 seconds.
-				WriteLog -info -noconsole "RestartShutdownNotifier: "
-				WriteLog -info -nonewline ("Server_reset_in_$MinutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
-				RCON_Broadcast -BroadcastMessage ("Server_reset_in_$minutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
-				Start-Sleep -Seconds 30 # Wait for 30 seconds
-				$script:TimeUntilServerReset = $Script:TimeUntilServerReset -30 # Decrement the time remaining
-			}
-			Elseif ($Script:TimeUntilServerReset -ge 10){#if there's between 10 seconds and 1 min left, send a reminder every 10 seconds
-				WriteLog -info -noconsole "RestartShutdownNotifier: "
-				WriteLog -info -nonewline ("Server_reset_in_$MinutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
-				RCON_Broadcast -BroadcastMessage ("Server_reset_in_$SecondsRemaining" + "_seconds.")
-				if ($Script:TimeUntilServerReset -le 10){#if server is about to restart
-					Start-Sleep -Seconds 5 # Only wait for 5 seconds so the 'shutting down now' warning can be seen.
-					$script:timeUntilServerReset = 0 # Decrement the time remaining
-				}
-				Else {
-					Start-Sleep -Seconds 10 # Wait for 10 seconds
-					$script:timeUntilServerReset = $Script:TimeUntilServerReset -10 # Decrement the time remaining
-				}
-			}
-		}
-		Else {#if server was shutdown (eg by user manually), cancel messaging.
-			$SkipRemaining = $True
-			break
-		}
-		if ($script:TimeUntilServerReset -eq 0 -and $SkipRemaining -ne $True){#if there's less than 10 seconds left, announce immediate shutdown.
-			WriteLog -info -noconsole "RestartShutdownNotifier: "
-			WriteLog -info -nonewline "Server_resetting_now!"
-			RCON_Save #Force save just prior to server shutdown
-			RCON_Broadcast -BroadcastMessage "Server_resetting_now!"
-			start-sleep (5 + 5) #5 seconds for remaining shutdown time and 5 seconds for buffer
-			WriteLog -verbose ("RestartShutdownNotifier: Waited " + ([int]$Config.AutoShutdownTimer + 5) + " seconds for server to shutdown.")
-		}
-	}
-	if ($null -ne (Get-Process | Where-Object {$_.processname -match "palserver"})){#if palserver is STILL running, force closure.
-		WriteLog -warning -noconsole "LaunchServer: "
-		WriteLog -warning -nonewline "Force killing server processes..."
-		taskkill /F /IM PalServer.exe | out-null
-		taskkill /F /IM PalServer-Win64-Test-Cmd.exe | out-null
-	}
-}
 Function LaunchServer {
-	if ($Running -eq $True){
+	if ($null -ne (Get-Process | Where-Object {$_.processname -match "palserver"})){
 		WriteLog -info -noconsole "LaunchServer: Server is currently running"
-		RestartShutdownNotifier
+		RCON_ShutdownRestartNotifier -Restart
 	}
 	if ($False -eq $UpdateOnly) {
 		if (-not $Config.NormalSettingsName.EndsWith(".ini")){#add .ini to value if it wasn't specified in config.
@@ -516,7 +422,6 @@ Function LaunchServer {
 				$Script:AllConfigOptions[($file.Name).replace(".txt","")] = $file.FullName
 			}
 			$currentDay = (Get-Date -Format "dddd") #;$currentday = (Get-Date).AddDays(-3).ToString("dddd") #for testing theme on previous days
-			
 			#Validation
 			$daysOfWeek = @("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 			foreach ($day in $daysOfWeek) {
@@ -543,8 +448,7 @@ Function LaunchServer {
 			}
 			$SettingsActual = ($ServerPath +"\Pal\Saved\Config\WindowsServer\PalWorldSettings.ini")
 			$AllConfigOptionsObject = @()
-			# Adding key-value pairs to the variable
-			foreach ($key in $Script:AllConfigOptions.Keys) {
+			foreach ($key in $Script:AllConfigOptions.Keys) {# Adding key-value pairs to the variable
 				$value = $AllConfigOptions[$key]
 				$entry = [PSCustomObject]@{
 					Name  = $key
@@ -571,10 +475,9 @@ Function LaunchServer {
 		Else {
 			$Community = ""
 		}
-
 		if ($Null -eq $LaunchParameters -or $LaunchParameters -eq ""){
 			WriteLog -verbose "LaunchServer: Standard Launch Parameters used"
-			$LaunchParameters = "$Community -log -publicip=$PublicIP -publicport=$GamePort -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS"
+			$LaunchParameters = "$Community -log -publicip=$HostIP -publicport=$GamePort -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS"
 		}
 		Start-Process ($Script:ServerPath + "\PalServer.exe") $LaunchParameters
 		Write-Host
@@ -589,16 +492,16 @@ Function ConfirmPlayer { #Validate if SteamID matches anything for kick/ban.
 		WriteLog -verbose "ConfirmPlayer: There is no-one Online."
 		return
 	}
-	$matches = $PlayersObject | Where-Object { $_.steamid -eq $PlayerDetails } # Check if the string partially is identical to any "name" value in the array
+	$matches = $PlayersObject | Where-Object { $_.name -eq $PlayerDetails } # Check if the string partially is identical to any "name" value in the array. Checking name needs to come first because otherwise someone could rename themselves to someone elses steamID and get the wrong person kicked/banned
 	if ($matches) {
-		Writelog -verbose "ConfirmPlayer: Player SteamID found for $PlayerDetails"
+		Writelog -verbose "ConfirmPlayer: Player Name found for $PlayerDetails"
 		$Script:PlayerDetailsObject = $matches
 		$Script:ProceedWithKickOrBan = $True
 		return
 	}
-	$matches = $PlayersObject | Where-Object { $_.name -eq $PlayerDetails } # Check if the string partially is identical to any "name" value in the array
+	$matches = $PlayersObject | Where-Object { $_.steamid -eq $PlayerDetails } # Check if the string partially is identical to any "name" value in the array
 	if ($matches) {
-		Writelog -verbose "ConfirmPlayer: Player Name found for $PlayerDetails"
+		Writelog -verbose "ConfirmPlayer: Player SteamID found for $PlayerDetails"
 		$Script:PlayerDetailsObject = $matches
 		$Script:ProceedWithKickOrBan = $True
 	}
@@ -798,17 +701,114 @@ Function Backup {
 		}
 	}
 }
-Function RCON_Shutdown {#RCON
-	param ([int]$ShutdownTimer,$shutdownmessage)
-	if ($ShutdownTimer -eq "" -or $Null -eq $ShutdownTimer -or $ShutdownTimer -lt 1){#if Shutdown timer isn't specified.
-		$ShutdownTimer = $Config.AutoShutdownTimer
-	}
-	if ($Null -eq $ShutdownMessage){#if Shutdown message isn't specified.
-		$ShutdownMessage = ("Admin_is_shutting_down_server_in_" + $ShutdownTimer + "_Seconds.")
-	}
-	WriteLog -warning -noconsole "RCON_Shutdown: "
-	WriteLog -warning -nonewline "Shutting down in $ShutdownTimer seconds."
+Function RCON_ShutdownRestartNotifier {
+	param ([int]$ShutdownTimer,$ShutDownMessage,[switch]$Restart)
+	if ($Restart -eq $True){$RestartOrShutDown = "restart"} Else {$RestartOrShutDown = "shutdown"}
+	if ($Null -eq $ShutdownTimer -or $ShutdownTimer -eq ""){$ShutdownTimer = $Config.AutoShutdownTimer}
+	if ($Null -eq $ShutdownMessage -or $ShutdownMessage -eq ""){$shutdownmessage = "Server_is_scheduled_to_$RestartOrShutDown..."}
 	& ($Config.ARRCONPath + "\ARRCON.exe") --host $HostIP --port $RCONPort --pass $RCONPass "Shutdown $ShutdownTimer $ShutdownMessage"
+	$Script:TimeUntilServerReset = [int]$ShutdownTimer
+	WriteLog -info -noconsole "RCON_ShutdownRestartNotifier: "
+	WriteLog -info -nonewline ("Waiting " + ([int]$ShutdownTimer + [int]$Delay) + " seconds for server to $RestartOrShutDown...")
+	$MinutePlural = "s"
+	while ($script:TimeUntilServerReset -gt 0){
+		if ((Get-Process | Where-Object {$_.processname -match "palserver"}) -and $script:TimeUntilServerReset -ge 10){ #if server process is still running	
+			$script:MinutesRemaining = [math]::floor($Script:TimeUntilServerReset / 60) # Calc Minutes remaining
+			$script:SecondsRemaining = $Script:TimeUntilServerReset % 60 # Calc Seconds remaining
+			while ($script:MinutesRemaining -gt 60){#if time is over an hour (it bloody shouldn't be) then wait until a more reasonable time to start sending messages.
+				start-sleep 60
+				$script:MinutesRemaining = $script:MinutesRemaining -60
+				$Script:TimeUntilServerReset = $Script:TimeUntilServerReset -60
+			}
+			if ($script:MinutesRemaining -ge 2 -and $script:SecondsRemaining -ne 0){#if there's a large amount of time left, make a nice even round time when broadcasting messages.
+				start-sleep $script:SecondsRemaining
+				$script:TimeUntilServerReset = $Script:TimeUntilServerReset - $script:SecondsRemaining
+				$script:SecondsRemaining = 0
+			}
+			Else {
+				while ($script:MinutesRemaining -eq 0 -and $script:SecondsRemaining -notin @("10","20","30","40","50")){#if time is within 60 seconds, wait until the time left is a nice round number.
+					start-sleep 1
+					$script:SecondsRemaining = $script:SecondsRemaining -1
+					$Script:TimeUntilServerReset = $Script:TimeUntilServerReset -1
+				}
+				while ($script:MinutesRemaining -eq 1 -and ($script:SecondsRemaining -ne 0 -and $script:SecondsRemaining -ne 30)){#if time is within 60 seconds, wait until the time left is either 0 or 30
+					start-sleep 1	
+					$script:SecondsRemaining = $script:SecondsRemaining -1
+					$Script:TimeUntilServerReset = $Script:TimeUntilServerReset -1
+				} 
+				$MinutePlural = ""
+			}
+			if ($Script:TimeUntilServerReset -ge 3600){#if there's more an hour send a reminder 15 minutes.
+				WriteLog -verbose ("RCON_ShutdownRestartNotifier: Server_$($RestartOrShutdown)_in_$MinutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
+				RCON_Broadcast -BroadcastMessage ("Server_$($RestartOrShutdown)_in_$minutesRemaining" + "_minute$MinutePlural")
+				Start-Sleep -Seconds 900 # Wait for 15 minutes
+				$script:TimeUntilServerReset = $Script:TimeUntilServerReset -900 # Decrement the time remaining
+			}
+			elseif ($Script:TimeUntilServerReset -ge 900){#if there's between 15 and 60 mins left, send a reminder every 5 minutes
+				WriteLog -verbose ("RCON_ShutdownRestartNotifier: Server_$($RestartOrShutdown)_in_$MinutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
+				RCON_Broadcast -BroadcastMessage ("Server_$($RestartOrShutdown)_in_$minutesRemaining" + "_minute$MinutePlural")
+				Start-Sleep -Seconds 300 # Wait for 300 seconds
+				$script:TimeUntilServerReset = $Script:TimeUntilServerReset -300 # Decrement the time remaining
+			}
+			elseif ($Script:TimeUntilServerReset -ge 300){#if there's between 5 and 15 mins left, send a reminder every minute
+				WriteLog -verbose ("RCON_ShutdownRestartNotifier: Server_$($RestartOrShutdown)_in_$MinutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
+				RCON_Broadcast -BroadcastMessage ("Server_$($RestartOrShutdown)_in_$minutesRemaining" + "_minute$MinutePlural")
+				Start-Sleep -Seconds 60 # Wait for 60 seconds
+				$script:TimeUntilServerReset = $Script:TimeUntilServerReset -60 # Decrement the time remaining
+			}
+			Elseif ($Script:TimeUntilServerReset -ge 60){#if there's between 1 and 3 minutes left, send a reminder every 30 seconds.
+				WriteLog -verbose ("RCON_ShutdownRestartNotifier: Server_$($RestartOrShutdown)_in_$MinutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
+				RCON_Broadcast -BroadcastMessage ("Server_$($RestartOrShutdown)_in_$minutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
+				Start-Sleep -Seconds 30 # Wait for 30 seconds
+				$script:TimeUntilServerReset = $Script:TimeUntilServerReset -30 # Decrement the time remaining
+			}
+			Elseif ($Script:TimeUntilServerReset -ge 10){#if there's between 10 seconds and 1 min left, send a reminder every 10 seconds
+				WriteLog -verbose ("RCON_ShutdownRestartNotifier: Server_$($RestartOrShutdown)_in_$MinutesRemaining" + "_minute$MinutePlural" + "_and_$SecondsRemaining" + "_seconds.")
+				RCON_Broadcast -BroadcastMessage ("Server_$($RestartOrShutdown)_in_$SecondsRemaining" + "_seconds.")
+				if ($Script:TimeUntilServerReset -le 10){#if server is about to restart
+					Start-Sleep -Milliseconds 4750 # Only wait for 5 ish seconds so the 'shutting down now' warning can be seen and server can be saved.
+					$script:timeUntilServerReset = 0 # Decrement the time remaining
+				}
+				Else {
+					Start-Sleep -Seconds 10 # Wait for 10 seconds
+					$script:timeUntilServerReset = $Script:TimeUntilServerReset -10 # Decrement the time remaining
+				}
+			}
+		}
+		Elseif ((Get-Process | Where-Object {$_.processname -match "palserver"}) -and $script:TimeUntilServerReset -le 10){
+			$QuickShutdown = $True
+		}
+		Else {#if server was shutdown (eg by user manually), cancel messaging.
+			$SkipRemaining = $True
+			break
+		}
+		if (($script:TimeUntilServerReset -eq 0 -and $SkipRemaining -ne $True) -or $QuickShutdown -eq $True){#if there's less than 10 seconds left, announce immediate shutdown.
+			if ($Restart -eq $True){$RestartOrShutDown = "restarting"} Else {$RestartOrShutDown = "shutting_down"}
+			WriteLog -verbose "RCON_ShutdownRestartNotifier: Server_$($RestartOrShutdown)_now!"		
+			if ($QuickShutdown -eq $True){
+				if ($script:TimeUntilServerReset -ge 5){
+					RCON_Save #Force save just prior to server shutdown
+					RCON_Broadcast -BroadcastMessage "Server_$($RestartOrShutdown)_now!"
+				}
+				Else {
+					Write-Host "Server_$($RestartOrShutdown)_now!"	
+				}
+				start-sleep ($script:TimeUntilServerReset + 5) #wait for remaining shutdown time plus 5 seconds for buffer
+			}
+			Else {
+				RCON_Save #Force save just prior to server shutdown
+				RCON_Broadcast -BroadcastMessage "Server_$($RestartOrShutdown)_now!"
+				start-sleep (5 + 5) #5 seconds for remaining shutdown time and 5 seconds for buffer
+			}
+			WriteLog -verbose ("RCON_ShutdownRestartNotifier: Waited " + ([int]$ShutdownTimer + 5) + " seconds for server to shutdown.")
+		}
+	}
+	if ($null -ne (Get-Process | Where-Object {$_.processname -match "palserver"})){#if palserver is STILL running, force closure.
+		WriteLog -warning -noconsole "LaunchServer: "
+		WriteLog -warning -nonewline "Force killing server processes..."
+		taskkill /F /IM PalServer.exe | out-null
+		taskkill /F /IM PalServer-Win64-Test-Cmd.exe | out-null
+	}
 }
 Function RCON_Broadcast {#RCON
 	param ($BroadCastMessage)
@@ -876,17 +876,17 @@ Function RCON_ShowPlayers {#RCON
 		if ($True -eq $ShowPlayerCount){
 			$PlayersOnlineCount
 		}
-		if ($True -eq $ShowPlayers -or $True -eq $ShowPlayersNoHeader){
+		if ($True -eq $ShowPlayers -or $True -eq $ShowPlayersNoHeader -or $True -eq $LogPlayers){
 			if ($PlayersOnlineCount -ne 0){
 				Function UpdatePlayerDB {
-					param($UpdateCSV,$addcsv)
+					param([switch]$UpdateCSV,[switch]$addcsv)
 					try {
 						if ($UpdateCSV -eq $True){
-							$PlayerDB | Export-Csv -Path $csvFilePath -NoTypeInformation -Force -Encoding utf8 -erroraction stop
+							$PlayerDB | Export-Csv -Path $PlayerCSVFilePath -NoTypeInformation -Force -Encoding utf8 -erroraction stop
 							Writelog -info -noconsole ("RCON_ShowPlayers: Player '$($PlayerToUpdate.Name)' updated in CSV." -f $OnlinePlayer.Name)
 						}
 						If ($AddCSV -eq $True){
-							$OnlinePlayer | Export-Csv -Path $csvFilePath -Append -NoTypeInformation -Force -Encoding utf8 -erroraction stop
+							$OnlinePlayer | Export-Csv -Path $PlayerCSVFilePath -Append -NoTypeInformation -Force -Encoding utf8 -erroraction stop
 							Writelog -info -noconsole ("RCON_ShowPlayers: Player '{0}' added to CSV." -f $OnlinePlayer.Name)
 						}
 						$Script:CSVLocked = $False
@@ -896,13 +896,13 @@ Function RCON_ShowPlayers {#RCON
 						$Script:CSVLocked = $True
 					}
 				}	
-				$csvFilePath = ("$ServerPath\Pal\Saved\SaveGames\PlayerDB.csv")
-				if (-not (Test-Path $csvFilePath)) {# Create CSV file with headers if it doesn't exist
+				$PlayerCSVFilePath = ("$ServerPath\Pal\Saved\SaveGames\PlayerDB.csv")
+				if (-not (Test-Path $PlayerCSVFilePath)) {# Create CSV file with headers if it doesn't exist
 					Writelog -info -noconsole "RCON_ShowPlayers: PlayerDB.csv didn't exist so created it."
-					"Name,PlayerUID,SteamID,firstseen,lastseen,previousnames" | Out-File -FilePath $csvFilePath -Encoding utf8
+					"Name,PlayerUID,SteamID,firstseen,lastseen,previousnames" | Out-File -FilePath $PlayerCSVFilePath -Encoding utf8
 				}
 				foreach ($OnlinePlayer in $PlayersOnlineObject){
-					$PlayerDB = Import-Csv -Path $csvFilePath
+					$PlayerDB = Import-Csv -Path $PlayerCSVFilePath
 					$OnlinePlayerMatchesPlayerDB = $PlayerDB | Where-Object { $_.SteamID -eq $OnlinePlayer.SteamID } #check if player already exists in the csv
 					if ($OnlinePlayerMatchesPlayerDB) {#if they ARE in the csv file.
 						$PlayerToUpdate = $PlayerDB | Where-Object { $_.SteamID -eq $OnlinePlayer.SteamID }
@@ -911,12 +911,12 @@ Function RCON_ShowPlayers {#RCON
 							$PlayerToUpdate.PreviousNames = ($PlayerToUpdate.PreviousNames + ", " + $PlayerToUpdate.Name).Trimstart(', ')
 							$PlayerToUpdate.Name = $OnlinePlayer.name
 						}
-						UpdatePlayerDB -UpdateCSV $True
+						UpdatePlayerDB -UpdateCSV
 					}
 					else { #if they aren't in the csv file.
 						$OnlinePlayer | Add-Member -MemberType NoteProperty -Name 'FirstSeen' -Value (Get-Date).ToString('yyyy-MM-dd HH:mm:ss') -Force #add time properties.
 						$OnlinePlayer | Add-Member -MemberType NoteProperty -Name 'LastSeen' -Value (Get-Date).ToString('yyyy-MM-dd HH:mm:ss') -Force
-						UpdatePlayerDB -AddCSV $true
+						UpdatePlayerDB -AddCSV
 					}
 				}
 				if ($Script:CSVLocked -eq $True){
@@ -924,23 +924,23 @@ Function RCON_ShowPlayers {#RCON
 						Writelog -errorlog -newline "Unable to update PlayerDB.csv."
 						Writelog -errorlog -nonewline "File is likely locked, make sure to close it if it's open."
 						Writelog -errorlog -nonewline "Alternatively perhaps the script doesn't have permissions to write to this location."
+						start-sleep 3
 				}
 				$PlayersOnline = ($PlayersOnline | Select-Object -First ($PlayersOnline.Count - 1)| Select-Object -Skip 1) # skip blank last row. skip rcon command header.
 				if ($LogPlayers -eq $True){
-					$PlayersOnline
 					WriteLog -info -noconsole "RCON_ShowPlayers: Players Online: $PlayerNamesCommaSeparated"
 					WriteLog -info -noconsole "RCON_ShowPlayers: Writing to PlayersOnline.txt"
-					WriteLog -info -CustomLogFile "PlayersOnline.txt" "Players Online details: (PlayerName, PlayerUID, SteamID):"
+					WriteLog -info -noconsole -CustomLogFile "PlayersOnline.txt" "Players Online details: (PlayerName, PlayerUID, SteamID):"
 					foreach ($Player in $PlayersOnlineObject){ #skip csv header
 						WriteLog -newline -noconsole -CustomLogFile "PlayersOnline.txt" ($Player.Name + ", " + $Player.playeruid + ", " + $Player.Steamid)
 						WriteLog -info -noconsole ("RCON_ShowPlayers: added " + $Player.Name + " to PlayersOnline.txt")
 					}
 					WriteLog -info -noconsole "RCON_ShowPlayers: Wrote to PlayersOnline.txt"
 				}
-				if ($ShowPlayersNoHeader -ne $True){
+				if ($ShowPlayers -eq $True){
 					$PlayersOnline
 				}
-				Else {
+				Elseif ($ShowPlayersNoHeader -eq $True){
 					$PlayersOnline = ($PlayersOnline | Select-Object -Skip 1) # skip blank last row. skip rcon command header.
 					$PlayersOnline
 				}
@@ -963,6 +963,7 @@ Function RCON_DoExit {#RCON
 	WriteLog -warning -noconsole "RCON: "
 	WriteLog -warning -nonewline "Shutting down now..."
 	& ($Config.ARRCONPath + "\ARRCON.exe") --host $HostIP --port $RCONPort --pass $RCONPass DoExit
+	start-sleep -milliseconds 4850 #takes a short time for server to actually close
 }
 Function RCON_KickPlayer {#RCON
 	param ($PlayerDetails)
@@ -1037,9 +1038,9 @@ Function RCON_BanPlayer {#RCON
 	}
 }
 Function RCON_Logic {#Pull server data or issue commands via the ARRCON client
-	WriteLog -info -noconsole "RCON: Starting RCON Function"
+	WriteLog -info -noconsole "RCON_Logic: Starting RCON Function"
 	if ($Running -ne $True){
-		WriteLog -errorlog -noconsole "RCON: Server is offline, RCON function cancelled."
+		WriteLog -errorlog -noconsole "RCON_Logic: Server is offline, RCON function cancelled."
 		Write-Output "Server Offline" | Red
 		return
 	}
@@ -1047,13 +1048,14 @@ Function RCON_Logic {#Pull server data or issue commands via the ARRCON client
 		RCON_Info -Info $Info.ispresent -Version $Version.ispresent -Servername $ServerName.ispresent
 	}
 	If ($True -eq $ShowPlayers -or $True -eq $ShowPlayerCount -or $True -eq $ShowPlayerNames -or $True -eq $ShowPlayersNoHeader -or $LogPlayers -eq $True){
-		RCON_ShowPlayers -ShowPlayers $ShowPlayers -ShowPlayerCount $ShowPlayerCount -ShowPlayerNames $ShowPlayerNames -ShowPlayersNoHeader $ShowPlayersNoHeader
+		RCON_ShowPlayers -ShowPlayers $ShowPlayers -ShowPlayerCount $ShowPlayerCount -ShowPlayerNames $ShowPlayerNames -ShowPlayersNoHeader $ShowPlayersNoHeader -LogPlayers $LogPlayers
 	}
 	If ($True -eq $Save){
 		RCON_Save
 	}
 	If ($Shutdown -eq $True){
-		RCON_Shutdown -ShutdownTimer $ShutdownTimer -shutdownmessage $shutdownmessage
+		#RCON_Shutdown -ShutdownTimer $ShutdownTimer -shutdownmessage $shutdownmessage
+		RCON_ShutdownRestartNotifier -ShutdownTimer $ShutdownTimer -ShutdownMessage $ShutDownMessage
 	}
 	If ("" -ne $Broadcast){
 		RCON_Broadcast -BroadcastMessage $Broadcast
@@ -1074,22 +1076,22 @@ Function SteamCMDCheck {
 	if ($Config.SteamCMDPath -eq ""){
 		$Script:Config.SteamCMDPath = "C:\Program Files\SteamCMD"
 		Write-Host
-		WriteLog -info -noconsole "Setup: "
+		WriteLog -info -noconsole "SteamCMDCheck: "
 		WriteLog -info -nonewline "Updating SteamCMDPath in Config.xml"
 		$XML = Get-Content "$Script:WorkingDirectory\Config.xml"
 		$Pattern = "<SteamCMDPath></SteamCMDPath>"
 		$Replacement = "<SteamCMDPath>$($Config.SteamCMDPath)</SteamCMDPath>"
 		$NewXML = $XML -replace [regex]::Escape($Pattern), $Replacement
 		$NewXML | Set-Content -Path "$Script:WorkingDirectory\Config.xml"
-		WriteLog -success -noconsole "Setup: "
+		WriteLog -success -noconsole "SteamCMDCheck: "
 		WriteLog -success -nonewline "Updated SteamCMDPath to $($Config.SteamCMDPath) in config.xml"
 		Start-Sleep -milliseconds 1500
 	}
 	if (-not (Test-Path ($Config.SteamCMDPath + "\steamcmd.exe"))){
-		Writelog -info -noconsole "Setup: "
+		Writelog -info -noconsole "SteamCMDCheck: "
 		Writelog -info -nonewline "Steam CMD not installed, Start download steamcmd.zip..."
 		if (-not (Test-Path $Config.SteamCMDPath)){
-			WriteLog -info -noconsole "Setup: "
+			WriteLog -info -noconsole "SteamCMDCheck: "
 			WriteLog -info -nonewline "Creating SteamCMD folder in $($Config.SteamCMDPath)"
 			New-Item -ItemType Directory -Path $Config.SteamCMDPath -ErrorAction stop | Out-Null 
 		}
@@ -1097,20 +1099,20 @@ Function SteamCMDCheck {
 		Invoke-RestMethod -Uri $SteamCMDZipURL -OutFile ($Config.SteamCMDPath + "\steamcmd.zip")
 		Expand-Archive -Path ($Config.SteamCMDPath + "\steamcmd.zip") -DestinationPath ($Config.SteamCMDPath) -Force
 		Remove-Item -Path ($Config.SteamCMDPath + "\steamcmd.zip")
-		WriteLog -success -noconsole "Setup: "
+		WriteLog -success -noconsole "SteamCMDCheck: "
 		WriteLog -success -nonewline "SteamCMD installed to $($Config.SteamCMDPath)."
 	}
 }
 Function ARRCONCheck {
 	#Check if ARRCON is installed if not install it.
 	if ($Config.ARRCONPath -eq ""){
-		WriteLog -verbose ("Initialisation: ARRCON not Specified in Config.xml. Setting this to 'C:\Program Files\ARRCON'")
+		WriteLog -verbose ("ARRCONCheck: ARRCON not Specified in Config.xml. Setting this to 'C:\Program Files\ARRCON'")
 		$Script:Config.ARRCONPath = "C:\Program Files\ARRCON\"
 	}
-	WriteLog -verbose ("Initialisation: Checking if ARRCON.exe can be found in '" + $Config.ARRCONPath +"'")
+	WriteLog -verbose ("ARRCONCheck: Checking if ARRCON.exe can be found in '" + $Config.ARRCONPath +"'")
 	if (-not (Test-Path ($Config.ARRCONPath + "\ARRCON.exe"))){
 		if (-not (Test-Path $Config.SteamCMDPath)){
-			WriteLog -info -noconsole "Initialisation: "
+			WriteLog -info -noconsole "ARRCONCheck: "
 			WriteLog -info -nonewline "Creating ARRCON folder in $($Config.ARRCONPath)"
 			New-Item -ItemType Directory -Path $Config.ARRCONPath -ErrorAction stop | Out-Null 
 		}
@@ -1121,28 +1123,28 @@ Function ARRCONCheck {
 		Expand-Archive -Path "$($Config.ARRCONPath)\ARRCON-$($ReleaseInfo.Tag_name)-Windows.zip" -DestinationPath $Config.ARRCONPath -Force
 		start-sleep 5 #give a tiny bit of time to remove file lock from zip.
 		Remove-Item -Path "$($Config.ARRCONPath)\ARRCON-$($ReleaseInfo.Tag_name)-Windows.zip"
-		WriteLog -success -noconsole "Initialisation: ARRCON installed"
+		WriteLog -success -noconsole "ARRCONCheck: ARRCON installed"
 	}
 	Else {
-		WriteLog -Success -noconsole "Initialisation: ARRCON already installed"
+		WriteLog -Success -noconsole "ARRCONCheck: ARRCON already installed"
 	}
 	if ((Test-Path -Path ($Config.ARRCONPath + "\ARRCON.exe")) -ne $true){
-		WriteLog -errorlog -noconsole "Initialisation: "
+		WriteLog -errorlog -noconsole "ARRCONCheck: "
 		WriteLog -errorlog -nonewline "ARRCON was not found in the specified path in config.xml."
-		WriteLog -errorlog -noconsole "Initialisation: "
+		WriteLog -errorlog -noconsole "ARRCONCheck: "
 		WriteLog -errorlog -nonewline "ERROR: Please ensure you have downloaded ARRCON.exe and specified the correct folder in config.xml."
 		WriteLog -errorlog -nonewline "ARRCON.exe can be downloaded from https://github.com/radj307/ARRCON"
 		Pause
 		ExitCheck
 	}
 	Else {
-		WriteLog -Success -noconsole "Initialisation: ARRCON.exe was found in the specified path in config.xml."
+		WriteLog -Success -noconsole "ARRCONCheck: ARRCON.exe was found in the specified path in config.xml."
 	}
 }
 Function Menu {
-	WriteLog -warning -noconsole "Initialisation: "
+	WriteLog -warning -noconsole "Menu: "
 	WriteLog -warning -nonewline "No launch parameters provided."
-	WriteLog -info -noconsole "Initialisation: "
+	WriteLog -info -noconsole "Menu: "
 	WriteLog -info -nonewline "A future version will have a CLI based Menu and/or a GUI for running basic tasks." 
 	WriteLog -info -newline "Until then, this is primarily a tool to run in the backend and requires the use of parameters to run."
 	WriteLog -info -newline "For example in PowerShell (in the script directory) you can use: & .\PalworldServerTools.ps1 -info"

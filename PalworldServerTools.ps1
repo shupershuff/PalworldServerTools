@@ -76,7 +76,7 @@ Function WriteLog {
 			[string]$CustomLogFile #Explicitly specify the output filename.
 	)
 	if ($CustomLogFile -eq ""){	
-		$Script:LogFile = ($WorkingDirectory + "\" + $ScriptFileName.replace(".ps1","_")  + (("{0:yyyy/MM/dd}" -f (get-date)) -replace "/",".") + "log.txt")
+		$Script:LogFile = ($WorkingDirectory + "\" + $ScriptFileName.replace(".ps1","_")  + (("{0:yyyy/MM/dd}" -f (get-date)) -replace "/",".") + "_log.txt")
 	}
 	Else {
 		$Script:LogFile = ($WorkingDirectory + "\" + $CustomLogFile)
@@ -96,14 +96,15 @@ Function WriteLog {
 				$IsTodaysLogFile = ($firstDate.Date -eq (Get-Date).Date) #compare match against todays date
 			}
 			if ($IsTodaysLogFile -eq $False){
-				Rename-Item $Script:LogFile ($WorkingDirectory + "\" + $ScriptFileName.replace(".ps1","_") + (("{0:yyyy/MM/dd}" -f $firstDate) -replace "/",".") + "log.txt")
+				Rename-Item $Script:LogFile ($WorkingDirectory + "\" + $ScriptFileName.replace(".ps1","_") + (("{0:yyyy/MM/dd}" -f $firstDate) -replace "/",".") + "_log.txt")
 				Write-Verbose "Archived Log file."
 			}
 			#Check if there's more than 3 logfiles with a date and if so delete the oldest one
-			$logFiles = Get-ChildItem -Path $WorkingDirectory -Filter "*.txt" | Where-Object { $_.Name -match '\d{2}\.\d{2}\.\d{2}log.txt' }
+			$logFiles = Get-ChildItem -Path $WorkingDirectory -Filter "*.txt" | Where-Object { $_.Name -match '\d{2}\.\d{2}\.\d{2}_?\S*log\.txt' }
 			$logFilesToKeep = $logFiles | Sort-Object name -Descending | Select-Object -First $LogsToKeep #sorting by Name rather than LastWriteTime in case someone looks back and edits it.
+			$logFilesToDelete = $logFiles | Where-Object { $_ -notin $logFilesToKeep }
 			foreach ($fileToDelete in $logFilesToDelete) {# Delete log files that exceed the latest three
-				#Remove-Item -Path $fileToDelete.FullName -Force
+				Remove-Item -Path $fileToDelete.FullName -Force
 				Write-Verbose ("Deleted " + $fileToDelete.FullName)
 			}
 		}

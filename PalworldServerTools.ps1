@@ -18,22 +18,9 @@ To Do:
 - Tidy up for PlayersOnline.txt so it doesn't get massive
 - Investigate having most RCON features work when script is run from remote host.
 
-Changes since 1.0.0 (next version edits):
-- Implemented Backup feature. See Github readme for explanation.
-- Implemented Server Setup feature. See Github readme for explanation.
-- Implemented Kick & Ban with username validation (you can enter either playername or steam ID). Also able to ban offline players.
-- Breaking Change: Changed Parameter "-StartNoTheme" to "-Start"
-- Breaking Change: Changed ShowPlayers to "ShowPlayerNames". ShowPlayers now shows CSV output of online players (standard output by RCON).
-- Added parameter for retrieving players in csv without the header (as it's needed by internal functions anyway).
-- Improvements to Server Shutdown messaging.
-- ARRCON now automatically installs if it's not found.
-- SteamCMD now automatically installs if it's not found.
-- Fixed various issues with logging and typos
-- Fixed updates not working properly for paths with spaces in them.
-- Fixed update function not working for directories with spaces in them.
-- Fixed the filename outputting incorrectly for "todaystheme.txt" (was .todaystheme.txt"
-- Code tidy ups and future proofing.
-- Adjustments to config validation and checks.
+Changes since 1.1.0 (next version edits):
+- Fixed minor issues with logging.
+- Fixed Setup not working.
 
 #>
 ##########################################################################################################
@@ -43,18 +30,19 @@ param(
 	[switch]$Info,[switch]$Version,[switch]$ServerName,[switch]$ShowPlayers,[switch]$ShowPlayersNoHeader,[switch]$ShowPlayerNames,[switch]$ShowPlayerCount,[switch]$LogPlayers,[switch]$Shutdown,[int]$ShutdownTimer,$ShutdownMessage,[string]$Broadcast,[switch]$DoExit,[switch]$Save,
 	[string]$KickPlayer,[string]$BanPlayer,$ServerPath,$ThemeSettingsPath,$LaunchParameters,$HostIP,$RCONPort,$RCONPass,[switch]$UpdateOnly,[switch]$UpdateCheck,[switch]$NoUpdate,[switch]$Start,[switch]$StartThemed,[switch]$TodaysTheme,[Switch]$NoLogging,[switch]$Setup,[Switch]$Backup,[switch]$debug
 )
-$ScriptVersion = "1.1.0"
+$ScriptVersion = "1.1.1"
 
 if ($debug -eq $True){#courtesy of https://thesurlyadmin.com/2015/10/20/transcript-logging-why-you-should-do-it/
 	$KeepLogsFor = 15
 	$VerbosePreference = "Continue"
 	$LogPath = Split-Path $MyInvocation.MyCommand.Path
 	Get-ChildItem "$LogPath\*.log" | Where LastWriteTime -LT (Get-Date).AddDays(-$KeepLogsFor) | Remove-Item -Confirm:$false
-	$LogPathName = Join-Path -Path $LogPath -ChildPath "$($MyInvocation.MyCommand.Name)-$(Get-Date -Format 'MM-dd-yyyy').log"
+	$LogPathName = Join-Path -Path $LogPath -ChildPath "$($MyInvocation.MyCommand.Name)-$(Get-Date -Format 'MM-dd-yyyy').debug.log"
 	Start-Transcript $LogPathName -Append
 }
 $ScriptFileName = Split-Path $MyInvocation.MyCommand.Path -Leaf
 $WorkingDirectory = ((Get-ChildItem -Path $PSScriptRoot)[0].fullname).substring(0,((Get-ChildItem -Path $PSScriptRoot)[0].fullname).lastindexof('\')) #Set Current Directory path.
+$LogsToKeep = 7
 #Baseline of acceptable characters for ReadKey functions. Used to prevents receiving inputs from folk who are alt tabbing etc.
 $Script:AllowedKeyList = @(48,49,50,51,52,53,54,55,56,57) #0 to 9
 $Script:AllowedKeyList += @(96,97,98,99,100,101,102,103,104,105) #0 to 9 on numpad
@@ -88,7 +76,7 @@ Function WriteLog {
 			[string]$CustomLogFile #Explicitly specify the output filename.
 	)
 	if ($CustomLogFile -eq ""){	
-		$Script:LogFile = ($WorkingDirectory + "\" + $ScriptFileName.replace(".ps1","_")  + (("{0:yyyy/MM/dd}" -f (get-date)) -replace "/",".") +"log.txt")
+		$Script:LogFile = ($WorkingDirectory + "\" + $ScriptFileName.replace(".ps1","_")  + (("{0:yyyy/MM/dd}" -f (get-date)) -replace "/",".") + "log.txt")
 	}
 	Else {
 		$Script:LogFile = ($WorkingDirectory + "\" + $CustomLogFile)
@@ -108,15 +96,14 @@ Function WriteLog {
 				$IsTodaysLogFile = ($firstDate.Date -eq (Get-Date).Date) #compare match against todays date
 			}
 			if ($IsTodaysLogFile -eq $False){
-				Rename-Item $Script:LogFile ($WorkingDirectory + "\" + $ScriptFileName.replace(".ps1","_") + (("{0:yyyy/MM/dd}" -f $firstDate) -replace "/",".") + "_log.txt")
+				Rename-Item $Script:LogFile ($WorkingDirectory + "\" + $ScriptFileName.replace(".ps1","_") + (("{0:yyyy/MM/dd}" -f $firstDate) -replace "/",".") + "log.txt")
 				Write-Verbose "Archived Log file."
 			}
 			#Check if there's more than 3 logfiles with a date and if so delete the oldest one
-			$logFiles = Get-ChildItem -Path $WorkingDirectory -Filter "*.txt" | Where-Object { $_.Name -match '\d{2}\.\d{2}\.\d{2}_log.txt' }
-			$logFilesToKeep = $logFiles | Sort-Object name -Descending | Select-Object -First 3 #sorting by Name rather than LastWriteTime in case someone looks back and edits it.
-			$logFilesToDelete = $logFiles | Where-Object { $_ -notin $logFilesToKeep }
+			$logFiles = Get-ChildItem -Path $WorkingDirectory -Filter "*.txt" | Where-Object { $_.Name -match '\d{2}\.\d{2}\.\d{2}log.txt' }
+			$logFilesToKeep = $logFiles | Sort-Object name -Descending | Select-Object -First $LogsToKeep #sorting by Name rather than LastWriteTime in case someone looks back and edits it.
 			foreach ($fileToDelete in $logFilesToDelete) {# Delete log files that exceed the latest three
-				Remove-Item -Path $fileToDelete.FullName -Force
+				#Remove-Item -Path $fileToDelete.FullName -Force
 				Write-Verbose ("Deleted " + $fileToDelete.FullName)
 			}
 		}
@@ -170,7 +157,7 @@ Function WriteLog {
 		$newContent = $LogContent.Substring(0, $lastWordPosition) + $LogMessage + $LogContent.Substring($lastWordPosition + $lastWord.Length) # Replace the last occurrence of the last word in the content
 		$newContent | Set-Content -Path $LogFile # Write the modified content back to the file
 	}
-	while ($Complete -ne $True -or $WriteAttempts -eq 3){
+	while ($Complete -ne $True -and $WriteAttempts -ne 3){
 		try {
 			if (($NoLogging -eq $False -or ($CustomLogFile -ne "" -and $LogPlayers -eq $True)) -and $NoNewLine -eq $False ){ #if user has disabled logging, eg on sensors that check every minute or so, they may want logging disabled.
 				Add-content $LogFile -value $LogMessage -ErrorAction Stop
@@ -1298,7 +1285,7 @@ If ($Null -eq $ServerPath){#If Launch Parameter wasn't supplied
 		if (-not (Test-Path $ServerPath)) { #If path doesn't exist
 			New-Item -ItemType Directory -Path $ServerPath -ErrorAction stop | Out-Null  #create folder.
 		}
-		if ($setup -eq $True -and -not (Test-Path "$ServerPath\palserver.exe")){
+		if ($setup -ne $True -and -not (Test-Path "$ServerPath\palserver.exe")){
 			writelog -errorlog -noconsole "Initialisation: "
 			writelog -errorlog -nonewline "Server Path is inaccurate or server files don't yet exist."
 			writelog -errorlog -newline "If the server files don't exist yet, then please run the -setup parameter."

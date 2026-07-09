@@ -53,21 +53,21 @@ card:
     - type: entities
       entities:
         - type: conditional
-          conditions: # If PalServer-Win64-Test-CMD.exe is not running.
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+          conditions: # If PalServer-Win64-Shipping-CMD.exe is not running.
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state_not: '1'
           row:
             type: text
-            name: 'PalServer-Win64-Test-CMD:'
+            name: 'PalServer-Win64-Shipping-CMD:'
             text: Not Running :(
             icon: mdi:server
         - type: conditional
           conditions:
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             type: text
-            name: 'PalServer-Win64-Test-CMD:'
+            name: 'PalServer-Win64-Shipping-CMD:'
             text: Running
             icon: mdi:server
         - type: conditional
@@ -89,48 +89,48 @@ card:
             text: Running
             icon: mdi:server
         - type: conditional
-          conditions: # If PalServer-Win64-Test-CMD.exe is running.
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+          conditions: # If PalServer-Win64-Shipping-CMD.exe is running.
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             entity: sensor.ExampleHostname_palworld_server_name
             icon: mdi:rename
             name: Server Name
         - type: conditional
-          conditions: # If PalServer-Win64-Test-CMD.exe is running, show todays theme sensor.
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+          conditions: # If PalServer-Win64-Shipping-CMD.exe is running, show todays theme sensor.
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             entity: sensor.ExampleHostname_palworld_todays_theme
             icon: mdi:rename
             name: Todays Theme
         - type: conditional
-          conditions: # If PalServer-Win64-Test-CMD.exe is running, show version sensor
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+          conditions: # If PalServer-Win64-Shipping-CMD.exe is running, show version sensor
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             entity: sensor.ExampleHostname_palworld_version
             icon: mdi:update
             name: Version
         - type: conditional
-          conditions: # If PalServer-Win64-Test-CMD.exe is running, show updatecheck status sensor
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+          conditions: # If PalServer-Win64-Shipping-CMD.exe is running, show updatecheck status sensor
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             entity: sensor.ExampleHostname_palworld_update_available
             icon: mdi:update
             name: Update Status
         - type: conditional
-          conditions: # If PalServer-Win64-Test-CMD.exe is running, showplayers who online
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+          conditions: # If PalServer-Win64-Shipping-CMD.exe is running, showplayers who online
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             entity: sensor.ExampleHostname_palworld_players
             name: Players
             icon: mdi:bug-play-outline
         - type: conditional
-          conditions: # If PalServer-Win64-Test-CMD.exe is running, show count of players who are online
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+          conditions: # If PalServer-Win64-Shipping-CMD.exe is running, show count of players who are online
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             entity: sensor.ExampleHostname_palworld_player_count
@@ -140,8 +140,8 @@ card:
     - type: entities
       entities:
         - type: conditional
-          conditions: # If PalServer-Win64-Test-CMD.exe is not running and steam CMD is not running (ie, not in the middle of an update), show the start server button, 
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+          conditions: # If PalServer-Win64-Shipping-CMD.exe is not running and steam CMD is not running (ie, not in the middle of an update), show the start server button, 
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state_not: '1'
             - entity: sensor.ExampleHostname_processactive_steamcmd
               state_not: '1'
@@ -153,7 +153,7 @@ card:
           conditions: # If there's an update available, server is online and not currently updating, show update button
             - entity: sensor.ExampleHostname_palworld_update_available
               state: Update Available!
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
             - entity: sensor.ExampleHostname_processactive_steamcmd
               state_not: '1'
@@ -163,7 +163,7 @@ card:
             icon: mdi:update
         - type: conditional
           conditions: # If server is running, show this stop button
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             entity: button.ExampleHostname_palworldstopservergracefully30
@@ -171,7 +171,7 @@ card:
             icon: mdi:hand-back-right
         - type: conditional
           conditions: # If server is running, show this stop button
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             entity: button.ExampleHostname_palworldstopservergracefully10
@@ -179,7 +179,7 @@ card:
             icon: mdi:hand-back-right
         - type: conditional
           conditions: # If server is running, show this stop now button
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             entity: button.ExampleHostname_palworldstopservernow
@@ -187,7 +187,7 @@ card:
             icon: mdi:octagon
         - type: conditional
           conditions: # If server is running, show this Save button
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
               state: '1'
           row:
             entity: button.ExampleHostname_palworldsaveserver
@@ -203,14 +203,27 @@ card:
             text: Server Updating
             icon: mdi:update
         - type: conditional
-          conditions: # I haven't figured out a way to send broadcasts yet, I'll probably investigate once Palworld devs resolve the bug with server messages not allowing space characters.
-            - entity: sensor.ExampleHostname_processactive_palserverwin64testcmd
-              state: '1'
+          conditions:
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
+              state: "1"
           row:
-            type: text
-            name: Broadcast message
-            text: Feature coming soon!
-            icon: mdi:bullhorn
+            type: button
+            name: Broadcast Message
+            action_name: Send Message
+            tap_action:
+              action: call-service
+              service: script.palworld_broadcast_message_publish
+        - type: conditional
+          conditions:
+            - entity: sensor.ExampleHostname_processactive_palserverwin64shippingcmd
+              state: "1"
+            - entity: input_text.last_palworld_broadcast_message
+              state_not: ""
+          row:
+            entity: input_text.last_palworld_broadcast_message
+            name: Last Message Sent
+            tap_action:
+              action: none
       title: Palworld Server Controls
   columns: 1
 ```

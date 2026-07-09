@@ -5,9 +5,7 @@ If you're a Home Assistant user and want to create a dashboard with server contr
 HASS.Agent is a brilliant tool that can be used by Home Assistant to execute commands or retrieve data from sensors on your computer.<br>
 <br>
 **Installation**<br>
-The agent can be found here: https://github.com/LAB02-Research/HASS.Agent<br>
-Installation instructions can be seen here:<br>
-https://hassagent.readthedocs.io/en/latest/installation-and-configuration-summary<br>
+The agent can be found here: [https://github.com/LAB02-Research/HASS.Agent](https://github.com/hass-agent/HASS.Agent)<br>
 
 **Sensors Configuration**<br>
 Note, if you've confirmed that your script is running successfully I would recommend adding the parameter -NoLogging so your log file doesn't get added too each time one of these sensors refresh.<br>
@@ -26,6 +24,28 @@ For Issuing RCON commands:<br>
 ```C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File "C:\Palworld Server\.PalworldServerTools.ps1" -Save```<br>
 ![image](https://github.com/shupershuff/PalworldServerTools/assets/63577525/7f4e165d-582c-47a7-bbc3-e94a92924b51)<br>
 
+**Script**
+I used the following script yaml to enable the ability to send messages from Home Assistant:
+```
+palworld_broadcast_message_publish:
+  alias: Palworld Broadcast Message Publish
+  sequence:
+  - service: mqtt.publish
+    data:
+      topic: homeassistant/button/ExampleHostname/broadcast_message/action
+      payload: >-
+            -broadcast "{{ states('input_text.palworld_broadcast_message') }}"
+  - service: input_text.set_value
+    target:
+      entity_id: input_text.last_palworld_broadcast_message
+    data:
+      value: "{{ states('input_text.palworld_broadcast_message') }}"
+  - service: input_text.set_value
+    target:
+      entity_id: input_text.palworld_broadcast_message
+    data:
+      value: ""
+```
 ## Lovelace Card ##
 The yaml below is what I use on my Lovelace card.<br>
 I've added comments to the YAML below but to summarise, the conditions perform the following:<br>
